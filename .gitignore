@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+outputs/draft_*.md
+outputs/prompt_*.md
+outputs/corpus.jsonl
+outputs/experiments.jsonl
+*.log
