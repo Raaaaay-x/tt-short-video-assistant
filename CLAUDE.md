@@ -165,7 +165,11 @@ tt_agent/
 - [x] 选题规划器 (`strategist/topic_planner.py`)
 - [x] 平台分发适配 (`strategist/platform_adapter.py`)
 - [x] 内容日志+周复盘 (`store/content_log.py`)
+- [x] 对标库多维检索 (`corpus.search()` + web卡片)
+- [x] 数据洞察引擎 (`content_log.insights()`: 钩子排行/转化/趋势/建议)
 - [ ] web 页面集成 comment_miner / topic_planner
+- [ ] 选题池可视化
+- [ ] 移动端适配
 - [ ] 自动转录接入（第三方方案评估）
 - [ ] 到店转化归因模型
 
