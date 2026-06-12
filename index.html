@@ -250,10 +250,15 @@
     <!-- Input Card -->
     <div class="card">
       <h3>📹 对标视频逐字稿</h3>
-      <div style="margin-bottom:8px;">
-        <span class="example-chip" onclick="showExample('shoe')">👟 洗鞋效果展示</span>
-        <span class="example-chip" onclick="showExample('retail')">🏪 鞋城零售</span>
-        <span class="example-chip" onclick="showExample('knowledge')">📖 材质科普</span>
+      <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+        <div>
+          <span class="example-chip" onclick="showExample('shoe')">👟 洗鞋效果展示</span>
+          <span class="example-chip" onclick="showExample('retail')">🏪 鞋城零售</span>
+          <span class="example-chip" onclick="showExample('knowledge')">📖 材质科普</span>
+        </div>
+        <label style="font-size:0.8rem;color:var(--ink-mid);cursor:pointer;user-select:none;">
+          <input type="checkbox" id="batchMode" onchange="toggleBatchMode()" style="margin-right:4px;">批量模式
+        </label>
       </div>
       <textarea id="transcript" placeholder="粘贴对标视频的逐字稿...
 
@@ -268,6 +273,7 @@
         <button class="btn btn-primary" id="btnFull" onclick="runFull()">⚡ 一键全流程</button>
         <button class="btn btn-outline" id="btnDecon" onclick="runDeconstruct()">1️⃣ 先拆解</button>
         <button class="btn btn-outline" id="btnRewrite" onclick="runRewrite()" disabled>2️⃣ 再二创</button>
+        <button class="btn btn-primary" id="btnBatch" onclick="runBatch()" style="display:none;background:var(--orange);">📊 批量分析</button>
         <button class="btn btn-ghost" onclick="downloadResult()">💾 下载报告</button>
       </div>
       <div class="status-bar">
@@ -338,6 +344,70 @@ const EXAMPLES = {
 
 function showExample(type) {
   document.getElementById('transcript').value = EXAMPLES[type] || '';
+}
+
+function toggleBatchMode() {
+  const batch = document.getElementById('batchMode').checked;
+  const ta = document.getElementById('transcript');
+  const btnBatch = document.getElementById('btnBatch');
+  if (batch) {
+    ta.placeholder = '批量模式: 用 --- 分隔多个逐字稿\n\n逐字稿 1\n[0:00-0:03] 【画面】...\n【口播】...\n\n---\n\n逐字稿 2\n[0:00-0:03] 【画面】...\n【口播】...';
+    ta.style.minHeight = '300px';
+    btnBatch.style.display = 'inline-block';
+  } else {
+    ta.placeholder = '粘贴对标视频的逐字稿...\n\n格式示例:\n[0:00-0:03] 【画面】脏鞋特写\n【口播】你看这双鞋进来的样子...';
+    ta.style.minHeight = '180px';
+    btnBatch.style.display = 'none';
+  }
+}
+
+async function runBatch() {
+  const raw = document.getElementById('transcript').value.trim();
+  if (!raw) { setStatus('error','请粘贴多个逐字稿 (用 --- 分隔)'); return; }
+
+  const transcripts = raw.split(/\n*---+\n*/).filter(t => t.trim());
+  if (transcripts.length < 2) {
+    setStatus('error','批量模式需要至少 2 个逐字稿 (用 --- 分隔)');
+    return;
+  }
+
+  document.getElementById('outputArea').classList.add('show');
+  switchOutputTab('decon');
+
+  let batchReport = `# 批量竞品分析报告 | ${transcripts.length} 条视频\n\n`;
+  let summary = [];
+
+  for (let i = 0; i < transcripts.length; i++) {
+    setStatus('running', `批量分析: ${i+1}/${transcripts.length} (拆解中...)`);
+    updateSteps(2);
+
+    try {
+      const prompt = buildDeconstructPrompt(transcripts[i]);
+      const result = await callLLM(prompt, '你是短视频内容研究员。请用中文, Markdown格式回复。只输出核心5个维度的拆解, 不超过500字。');
+      batchReport += `## 视频 ${i+1}\n\n${result}\n\n---\n\n`;
+
+      // Extract brief summary
+      const hookMatch = result.match(/钩子[类型]*[：:]\s*(.+)/);
+      const hypMatch = result.match(/爆款假设[：:]\s*(.+)/);
+      summary.push({
+        num: i+1,
+        hook: hookMatch ? hookMatch[1].slice(0,40) : '未识别',
+        hypothesis: hypMatch ? hypMatch[1].slice(0,80) : '未识别',
+      });
+    } catch(e) {
+      batchReport += `## 视频 ${i+1}\n\n分析失败: ${e.message}\n\n---\n\n`;
+    }
+  }
+
+  // Summary table
+  batchReport = `# 批量竞品分析报告 | ${transcripts.length} 条视频\n\n## 汇总对比\n\n| # | 钩子类型 | 爆款假设 |\n|---|---------|--------|\n` +
+    summary.map(s => `| ${s.num} | ${s.hook} | ${s.hypothesis} |`).join('\n') +
+    `\n\n---\n\n## 逐条拆解\n\n` + batchReport.split('# 批量')[1] || batchReport;
+
+  deconResult = batchReport;
+  document.getElementById('paneDecon').innerHTML = mdToHtml(batchReport);
+  setStatus('done', `批量完成: ${transcripts.length} 条视频已分析 ✅`);
+  updateSteps(5);
 }
 
 // ═══════════════════════════════════════════
