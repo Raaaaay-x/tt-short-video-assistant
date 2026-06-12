@@ -210,6 +210,146 @@ def weekly_review(week_start: date | None = None) -> dict:
     }
 
 
+def insights() -> dict:
+    """
+    数据洞察引擎 — 从已发布数据中提取可执行的结论。
+
+    返回:
+      - hook_ranking: 钩子表现排行 (按完播/互动/涨粉)
+      - type_ranking: 内容类型表现排行
+      - best_time: 推测最佳发布时间 (粗略)
+      - trend: 近两周对比
+      - recommendations: 3-5 条具体建议
+    """
+    entries = load_log(days=60)
+    if len(entries) < 3:
+        return {"message": "数据不足，至少需要 3 条有回填数据的记录", "ready": False}
+
+    # 只取有回填数据的记录
+    with_data = [e for e in entries if e.get("views", 0) > 0]
+    if len(with_data) < 2:
+        return {"message": "回填数据不足，请至少回填 2 条的发布表现", "ready": False}
+
+    # ── 钩子排行 ──
+    hook_stats = {}
+    for e in with_data:
+        h = e.get("hook_type", "unknown")
+        if h not in hook_stats:
+            hook_stats[h] = {"count": 0, "views": 0, "completion": 0, "engagement": 0, "store": 0}
+        hs = hook_stats[h]
+        hs["count"] += 1
+        hs["views"] += e.get("views", 0)
+        hs["completion"] += e.get("completion_rate", 0)
+        hs["engagement"] += e.get("engagement_rate", 0)
+        hs["store"] += e.get("store_inquiries", 0) + e.get("store_visits", 0)
+
+    for h in hook_stats:
+        n = hook_stats[h]["count"]
+        hook_stats[h]["avg_views"] = round(hook_stats[h]["views"] / n)
+        hook_stats[h]["avg_completion"] = round(hook_stats[h]["completion"] / n, 3)
+        hook_stats[h]["avg_engagement"] = round(hook_stats[h]["engagement"] / n, 3)
+        hook_stats[h]["total_store"] = hook_stats[h]["store"]
+
+    hook_ranking = sorted(hook_stats.items(), key=lambda x: x[1]["avg_completion"], reverse=True)
+    best_hook = hook_ranking[0][0] if hook_ranking else "N/A"
+
+    # ── 内容类型排行 (按到店转化) ──
+    type_stats = {}
+    for e in with_data:
+        ct = e.get("content_type", "unknown")
+        if ct not in type_stats:
+            type_stats[ct] = {"count": 0, "views": 0, "store": 0}
+        type_stats[ct]["count"] += 1
+        type_stats[ct]["views"] += e.get("views", 0)
+        type_stats[ct]["store"] += e.get("store_inquiries", 0) + e.get("store_visits", 0)
+
+    for ct in type_stats:
+        n = type_stats[ct]["count"]
+        type_stats[ct]["avg_views"] = round(type_stats[ct]["views"] / n)
+        type_stats[ct]["total_store"] = type_stats[ct]["store"]
+
+    type_ranking = sorted(type_stats.items(), key=lambda x: x[1]["total_store"], reverse=True)
+    best_type = type_ranking[0][0] if type_ranking else "N/A"
+
+    # ── 趋势 (最近2周 vs 前2周) ──
+    recent = [e for e in with_data if e.get("published_at", "") >= (date.today() - timedelta(days=14)).isoformat()]
+    older = [e for e in with_data if e.get("published_at", "") < (date.today() - timedelta(days=14)).isoformat()]
+
+    trend = "stable"
+    if recent and older:
+        recent_avg = sum(e.get("views", 0) for e in recent) / len(recent)
+        older_avg = sum(e.get("views", 0) for e in older) / len(older)
+        if older_avg > 0:
+            change = (recent_avg - older_avg) / older_avg
+            if change > 0.2:
+                trend = "improving ↑"
+            elif change < -0.2:
+                trend = "declining ↓"
+            else:
+                trend = f"stable ({change:+.0%})"
+
+    # ── 推荐 ──
+    recommendations = []
+    if best_hook and best_hook != "N/A":
+        recommendations.append(f"多用 {best_hook} 钩子 — 完播率最高")
+    if best_type and best_type != "N/A":
+        recommendations.append(f"核心内容: {best_type} — 到店转化最多")
+    if len(recent) < 2:
+        recommendations.append("发布频率偏低，建议恢复到一周 5 条")
+    if trend == "declining ↓":
+        recommendations.append("近两周播放下滑，检查是否换钩子/结构，或平台算法调整")
+
+    return {
+        "ready": True,
+        "total_with_data": len(with_data),
+        "hook_ranking": [{"hook": h, **s} for h, s in hook_ranking],
+        "type_ranking": [{"type": ct, **s} for ct, s in type_ranking],
+        "best_hook": best_hook,
+        "best_type": best_type,
+        "trend": trend,
+        "recommendations": recommendations,
+    }
+
+
+def format_insights(ins: dict) -> str:
+    """格式化洞察为可读文本。"""
+    if not ins.get("ready"):
+        return f"数据洞察不可用: {ins.get('message')}"
+
+    lines = [
+        "# 📊 数据洞察",
+        f"基于 {ins['total_with_data']} 条已回填数据",
+        "",
+        "## 🎯 钩子表现排行",
+    ]
+    for h in ins.get("hook_ranking", []):
+        lines.append(
+            f"- **{h['hook']}**: {h['count']}条, "
+            f"均播 {h['avg_views']:,}, "
+            f"完播率 {h['avg_completion']:.1%}, "
+            f"互动率 {h['avg_engagement']:.1%}, "
+            f"到店 {h['total_store']}次"
+        )
+
+    lines.extend([
+        "",
+        "## 📂 内容类型排行 (按到店转化)",
+    ])
+    for t in ins.get("type_ranking", []):
+        lines.append(f"- **{t['type']}**: {t['count']}条, 均播 {t['avg_views']:,}, 到店 {t['total_store']}次")
+
+    lines.extend([
+        "",
+        f"## 📈 趋势: {ins.get('trend', 'unknown')}",
+        "",
+        "## 💡 行动建议",
+    ])
+    for r in ins.get("recommendations", []):
+        lines.append(f"- {r}")
+
+    return "\n".join(lines)
+
+
 def format_weekly_review(review: dict) -> str:
     """格式化周复盘为 Markdown。"""
     if review.get("message"):
