@@ -1,0 +1,19 @@
+{
+  "total_decon": 6,
+  "hook_types": {
+    "A1": 2
+  },
+  "structure_types": {
+    "contrast": 2
+  },
+  "platforms": {
+    "抖音": 6
+  },
+  "top_tags": [
+    "对比",
+    "洗鞋",
+    "翻毛皮"
+  ],
+  "avg_migrate": 1.7,
+  "with_experiment": 2
+}

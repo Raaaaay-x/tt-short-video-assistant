@@ -178,6 +178,24 @@
       </ul>
     </div>
 
+    <!-- Corpus Search -->
+    <div class="card">
+      <h3>🔎 对标库检索</h3>
+      <input type="text" id="corpusQuery" placeholder="搜索关键词..." style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin-bottom:6px;" oninput="searchCorpus()">
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
+        <select id="corpusHook" onchange="searchCorpus()" style="flex:1;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:0.75rem;">
+          <option value="">全部钩子</option>
+        </select>
+        <select id="corpusPlatform" onchange="searchCorpus()" style="flex:1;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:0.75rem;">
+          <option value="">全部平台</option>
+        </select>
+      </div>
+      <div id="corpusResults" style="max-height:200px;overflow:auto;font-size:0.78rem;line-height:1.6;">
+        <span class="dim-block" style="padding:8px;font-size:0.75rem;">输入关键词或选择过滤条件</span>
+      </div>
+      <div id="corpusStats" style="font-size:0.72rem;color:var(--ink-dim);margin-top:8px;padding-top:6px;border-top:1px solid var(--border);"></div>
+    </div>
+
     <!-- API Key -->
     <div class="card">
       <h3>🔑 API 设置</h3>
@@ -579,10 +597,72 @@ function downloadResult() {
   a.download = 'tt_agent_report.md'; a.click();
 }
 
+<script src="corpus_data.js"></script>
+<script>
 // ═══════════════════════════════════════════
-// INIT
+// CORPUS SEARCH
 // ═══════════════════════════════════════════
+function initCorpusSearch() {
+  if (typeof CORPUS_DATA === 'undefined') {
+    document.getElementById('corpusStats').textContent = '对标库数据未加载';
+    return;
+  }
+  const data = CORPUS_DATA;
+  document.getElementById('corpusStats').textContent = `${data.length} 条对标记录`;
+
+  // Populate filter dropdowns
+  const hooks = [...new Set(data.map(r=>r.hook_type).filter(Boolean))].sort();
+  const platforms = [...new Set(data.map(r=>r.platform).filter(Boolean))].sort();
+  const hookSel = document.getElementById('corpusHook');
+  const platSel = document.getElementById('corpusPlatform');
+  hooks.forEach(h => { const o=document.createElement('option'); o.value=h; o.textContent=h; hookSel.appendChild(o); });
+  platforms.forEach(p => { const o=document.createElement('option'); o.value=p; o.textContent=p; platSel.appendChild(o); });
+
+  // Show initial results
+  searchCorpus();
+}
+
+function searchCorpus() {
+  if (typeof CORPUS_DATA === 'undefined') return;
+  const q = (document.getElementById('corpusQuery').value||'').toLowerCase();
+  const hook = document.getElementById('corpusHook').value;
+  const plat = document.getElementById('corpusPlatform').value;
+
+  let results = CORPUS_DATA;
+  if (q) {
+    const kws = q.split(/\s+/);
+    results = results.filter(r => {
+      const txt = [r.title, ...r.tags, r.hypothesis].join(' ').toLowerCase();
+      return kws.some(kw => txt.includes(kw));
+    });
+  }
+  if (hook) results = results.filter(r => r.hook_type === hook);
+  if (plat) results = results.filter(r => r.platform === plat);
+
+  // Sort by score desc
+  results.sort((a,b) => (b.migrate_score||0) - (a.migrate_score||0));
+
+  const container = document.getElementById('corpusResults');
+  if (results.length === 0) {
+    container.innerHTML = '<div style="padding:8px;color:var(--ink-dim);font-size:0.75rem;">无匹配结果</div>';
+    return;
+  }
+
+  container.innerHTML = results.slice(0,15).map(r => `
+    <div style="padding:4px 0;border-bottom:1px solid var(--border);cursor:pointer;"
+         title="${(r.hypothesis||'').replace(/"/g,'&quot;')}">
+      <div style="font-weight:500;">${r.hook_type ? '<span style="color:var(--accent)">['+r.hook_type+']</span> ' : ''}${r.title}</div>
+      <div style="color:var(--ink-dim);font-size:0.72rem;">
+        ${r.platform} · ${r.date} · 适配度 ${r.migrate_score}/5
+        ${r.has_experiment ? ' · 🧪AB测试' : ''}
+        ${r.tags.length ? ' · '+r.tags.slice(0,3).join(', ') : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // existing init...
   const key = localStorage.getItem('tt_agent_api_key');
   const prov = localStorage.getItem('tt_agent_provider');
   if (key) {
@@ -591,6 +671,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('keyStatus').style.color = 'var(--green)';
   }
   if (prov) document.getElementById('provider').value = prov;
+
+  initCorpusSearch();
 });
 </script>
 </body>

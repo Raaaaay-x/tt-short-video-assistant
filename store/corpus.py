@@ -89,6 +89,98 @@ def search_by_tag(tag: str) -> list[dict]:
     return [r for r in load_corpus() if tag in r.get("tags", [])]
 
 
+def search(
+    query: str = "",
+    hook_type: str = "",
+    structure_type: str = "",
+    platform: str = "",
+    min_score: int = 0,
+    has_experiment: bool | None = None,
+    sort_by: str = "date",   # date / score / relevance
+    limit: int = 20,
+) -> list[dict]:
+    """
+    对标库多维检索。
+
+    示例:
+      search(query="洗鞋", hook_type="A1", min_score=3)
+      search(query="", platform="小红书", has_experiment=True)
+      search(query="翻毛皮", sort_by="score")
+    """
+    records = load_corpus()
+    results = []
+
+    query_lower = query.lower() if query else ""
+
+    for r in records:
+        # 文本匹配 (title + hypothesis + tags + migrate_notes)
+        if query_lower:
+            search_text = " ".join([
+                r.get("title", ""),
+                r.get("viral_hypothesis", ""),
+                r.get("migrate_notes", ""),
+                " ".join(r.get("tags", [])),
+            ]).lower()
+
+            # 支持多关键词 (空格分隔), OR 逻辑
+            keywords = query_lower.split()
+            if not any(kw in search_text for kw in keywords):
+                continue
+
+        # 精确过滤
+        if hook_type and r.get("hook_type") != hook_type:
+            continue
+        if structure_type and r.get("structure_type") != structure_type:
+            continue
+        if platform and r.get("platform") != platform:
+            continue
+        if min_score and r.get("migrate_score", 0) < min_score:
+            continue
+        if has_experiment is not None and r.get("has_experiment") != has_experiment:
+            continue
+
+        # 计算相关性 (简单: 关键词命中数)
+        if query_lower:
+            r["_relevance"] = sum(
+                1 for kw in keywords
+                if kw in (r.get("title","") + r.get("viral_hypothesis","") + r.get("migrate_notes","")).lower()
+            )
+        else:
+            r["_relevance"] = 0
+
+        results.append(r)
+
+    # 排序
+    if sort_by == "score":
+        results.sort(key=lambda r: r.get("migrate_score", 0), reverse=True)
+    elif sort_by == "relevance":
+        results.sort(key=lambda r: r.get("_relevance", 0), reverse=True)
+    else:  # date
+        results.sort(key=lambda r: r.get("deconstructed_at", ""), reverse=True)
+
+    return results[:limit]
+
+
+def list_hook_types() -> list[str]:
+    """列出对标库中所有钩子类型及使用次数。"""
+    counts = {}
+    for r in load_corpus():
+        h = r.get("hook_type", "")
+        if h:
+            counts[h] = counts.get(h, 0) + 1
+    return sorted(counts, key=counts.get, reverse=True)  # type: ignore
+
+
+def list_structure_types() -> list[str]:
+    """列出对标库中所有结构类型及使用次数。"""
+    counts = {}
+    for r in load_corpus():
+        s = r.get("structure_type", "")
+        if s:
+            counts[s] = counts.get(s, 0) + 1
+    return sorted(counts, key=counts.get, reverse=True)  # type: ignore
+
+
 # ══════════════════════════════════════════════════════════════
 # A/B 实验追踪
 # ══════════════════════════════════════════════════════════════
