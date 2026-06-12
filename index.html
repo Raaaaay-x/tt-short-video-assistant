@@ -6,178 +6,263 @@
 <title>tt_agent — 短视频内容研究员</title>
 <style>
   :root {
-    --bg: #F5F5F5; --surface: #FFFFFF; --border: #E0E0E0;
-    --ink: #1A1A1A; --ink-mid: #4A4A4A; --ink-dim: #9E9E9E;
-    --accent: #1A73E8; --accent-hover: #1557B0; --accent-bg: #E8F0FE;
-    --green: #0D7C66; --green-bg: #E8F5F0;
-    --orange: #C2610A; --orange-bg: #FFF4E8;
-    --red: #B91C3A; --red-bg: #FFF0F0;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --bg: #F8F9FB; --surface: #FFFFFF; --border: #E8ECF1;
+    --ink: #1E293B; --ink-mid: #64748B; --ink-dim: #94A3B8;
+    --accent: #6366F1; --accent-hover: #4F46E5; --accent-bg: #EEF2FF;
+    --accent-light: #F5F3FF;
+    --green: #10B981; --green-bg: #ECFDF5; --green-border: #A7F3D0;
+    --orange: #F59E0B; --orange-bg: #FFFBEB; --orange-border: #FDE68A;
+    --red: #EF4444; --red-bg: #FEF2F2; --red-border: #FECACA;
+    --blue: #3B82F6; --blue-bg: #EFF6FF; --blue-border: #BFDBFE;
+    --purple: #8B5CF6; --purple-bg: #F5F3FF;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+    --radius: 12px; --radius-sm: 8px;
+    --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    background:var(--bg); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;
-    color:var(--ink); min-height:100vh;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    color: var(--ink); min-height: 100vh; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
   /* ===== HEADER ===== */
   .header {
-    background:var(--surface); border-bottom:1px solid var(--border);
-    padding:16px 24px; display:flex; align-items:center; gap:12px;
-    box-shadow:var(--shadow); position:sticky; top:0; z-index:10;
+    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+    padding: 14px 28px; display: flex; align-items: center; gap: 14px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.25);
   }
-  .header .logo { font-size:1.3rem; font-weight:700; color:var(--ink); }
+  .header .logo { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
   .header .badge {
-    font-size:0.7rem; padding:3px 8px; border-radius:10px;
-    background:var(--accent-bg); color:var(--accent); font-weight:500;
+    font-size: 0.65rem; padding: 3px 10px; border-radius: 20px;
+    background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.95);
+    font-weight: 600; letter-spacing: 0.5px; backdrop-filter: blur(4px);
   }
-  .header .nav { margin-left:auto; display:flex; gap:12px; align-items:center; }
-  .header .nav a { color:var(--ink-mid); text-decoration:none; font-size:0.85rem; }
-  .header .nav a:hover { color:var(--accent); }
+  .header .nav { margin-left: auto; display: flex; gap: 16px; align-items: center; }
+  .header .nav a {
+    color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.83rem;
+    font-weight: 500; padding: 6px 12px; border-radius: 6px; transition: var(--transition);
+  }
+  .header .nav a:hover { background: rgba(255,255,255,0.15); color: #fff; }
 
   /* ===== LAYOUT ===== */
-  .main { max-width:1000px; margin:0 auto; padding:24px 16px; display:flex; gap:20px; }
-  .sidebar { width:280px; flex-shrink:0; }
-  .content { flex:1; min-width:0; }
+  .main { max-width: 1040px; margin: 0 auto; padding: 24px 20px 60px; display: flex; gap: 22px; }
+  .sidebar { width: 290px; flex-shrink: 0; }
+  .content { flex: 1; min-width: 0; }
 
   /* ===== CARDS ===== */
   .card {
-    background:var(--surface); border:1px solid var(--border); border-radius:10px;
-    padding:20px; margin-bottom:16px; box-shadow:var(--shadow);
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 18px 20px; margin-bottom: 14px;
+    box-shadow: var(--shadow-sm); transition: var(--transition);
   }
-  .card h3 { font-size:0.95rem; margin-bottom:8px; }
-  .card h3 .icon { margin-right:6px; }
-  .card p.dim { color:var(--ink-dim); font-size:0.8rem; }
+  .card:hover { box-shadow: var(--shadow); }
+  .card h3 { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: var(--ink); display: flex; align-items: center; gap: 6px; }
+  .card h3 .emoji { font-size: 1.1rem; }
+  .card p.dim { color: var(--ink-dim); font-size: 0.78rem; line-height: 1.5; }
 
   /* ===== SIDEBAR: STEPS ===== */
-  .steps { list-style:none; }
+  .steps { list-style: none; }
   .steps li {
-    padding:10px 12px; margin-bottom:6px; border-radius:8px; font-size:0.85rem;
-    display:flex; align-items:center; gap:8px; cursor:default;
-    transition:0.15s;
+    padding: 9px 12px; margin-bottom: 4px; border-radius: var(--radius-sm);
+    font-size: 0.82rem; display: flex; align-items: center; gap: 10px;
+    transition: var(--transition); color: var(--ink-mid);
   }
   .steps li .num {
-    width:24px; height:24px; border-radius:50%; display:flex;
-    align-items:center; justify-content:center; font-size:0.75rem;
-    font-weight:600; flex-shrink:0;
-    background:var(--bg); color:var(--ink-dim);
+    width: 26px; height: 26px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center; font-size: 0.72rem;
+    font-weight: 700; flex-shrink: 0; transition: var(--transition);
+    background: var(--bg); color: var(--ink-dim);
   }
-  .steps li.active { background:var(--accent-bg); }
-  .steps li.active .num { background:var(--accent); color:#fff; }
-  .steps li.done { color:var(--green); }
-  .steps li.done .num { background:var(--green); color:#fff; }
+  .steps li.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+  .steps li.active .num { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(99,102,241,0.3); }
+  .steps li.done { background: var(--green-bg); color: var(--green); }
+  .steps li.done .num { background: var(--green); color: #fff; }
 
-  /* ===== SIDEBAR: API KEY ===== */
-  .api-row { display:flex; gap:6px; margin-top:8px; }
-  .api-row select { flex:1; padding:6px 8px; border:1px solid var(--border); border-radius:6px; font-size:0.8rem; background:var(--surface); }
-  .api-row input { flex:2; padding:6px 8px; border:1px solid var(--border); border-radius:6px; font-size:0.8rem; }
-  .api-row button { padding:6px 12px; border:none; border-radius:6px; font-size:0.8rem; cursor:pointer; background:var(--accent); color:#fff; white-space:nowrap; }
+  /* ===== SIDEBAR: SEARCH ===== */
+  .search-input {
+    width: 100%; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    font-size: 0.8rem; background: var(--bg); transition: var(--transition);
+  }
+  .search-input:focus { outline: none; border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(99,102,241,0.08); }
+  .filter-row { display: flex; gap: 6px; margin-top: 6px; }
+  .filter-row select {
+    flex: 1; padding: 5px 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    font-size: 0.74rem; background: var(--bg); color: var(--ink-mid); transition: var(--transition);
+  }
+  .filter-row select:focus { outline: none; border-color: var(--accent); }
+
+  .result-list { max-height: 200px; overflow: auto; margin-top: 6px; }
+  .result-item {
+    padding: 6px 0; border-bottom: 1px solid var(--border); cursor: pointer;
+    transition: var(--transition);
+  }
+  .result-item:hover { background: var(--accent-bg); margin: 0 -8px; padding: 6px 8px; border-radius: 4px; }
+  .result-item .r-title { font-size: 0.78rem; font-weight: 600; }
+  .result-item .r-meta { font-size: 0.7rem; color: var(--ink-dim); margin-top: 1px; }
+
+  .topic-pool-item {
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+  }
+  .topic-pool-item .tp-title { font-size: 0.78rem; font-weight: 600; }
+  .topic-pool-item .tp-meta { font-size: 0.7rem; color: var(--ink-dim); margin-top: 1px; }
+
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.65rem;
+    font-weight: 600; letter-spacing: 0.2px;
+  }
+  .pill-high { background: var(--red-bg); color: var(--red); }
+  .pill-medium { background: var(--orange-bg); color: var(--orange); }
+  .pill-tag { background: var(--blue-bg); color: var(--blue); }
+
+  /* ===== API KEY ===== */
+  .api-row { display: flex; flex-direction: column; gap: 6px; }
+  .api-row select, .api-row input {
+    padding: 7px 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    font-size: 0.8rem; background: var(--bg); transition: var(--transition);
+  }
+  .api-row select:focus, .api-row input:focus { outline: none; border-color: var(--accent); background: #fff; }
+  .api-row button {
+    padding: 7px; border: none; border-radius: var(--radius-sm); font-size: 0.8rem;
+    cursor: pointer; background: var(--accent); color: #fff; font-weight: 600;
+    transition: var(--transition);
+  }
+  .api-row button:hover { background: var(--accent-hover); }
 
   /* ===== TEXTAREA ===== */
   textarea {
-    width:100%; min-height:180px; border:1px solid var(--border); border-radius:8px;
-    padding:14px; font-size:0.88rem; font-family:inherit; resize:vertical;
-    background:var(--bg); line-height:1.7; transition:0.15s;
+    width: 100%; min-height: 190px; border: 1.5px solid var(--border); border-radius: var(--radius);
+    padding: 14px 16px; font-size: 0.88rem; font-family: 'SF Mono','Fira Code','Menlo',monospace;
+    resize: vertical; background: var(--surface); line-height: 1.8; transition: var(--transition);
+    box-shadow: var(--shadow-sm);
   }
-  textarea:focus { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(26,115,232,0.1); }
+  textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.08); }
 
   /* ===== BUTTONS ===== */
-  .btn-row { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
   .btn {
-    padding:9px 22px; border:none; border-radius:8px; font-size:0.88rem;
-    cursor:pointer; font-weight:500; transition:0.15s; white-space:nowrap;
+    padding: 10px 22px; border: none; border-radius: var(--radius-sm); font-size: 0.85rem;
+    cursor: pointer; font-weight: 600; transition: var(--transition);
+    white-space: nowrap; letter-spacing: 0.2px;
+    display: inline-flex; align-items: center; gap: 6px;
   }
-  .btn-primary { background:var(--accent); color:#fff; }
-  .btn-primary:hover { background:var(--accent-hover); }
-  .btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
-  .btn-outline { background:var(--surface); color:var(--accent); border:1.5px solid var(--accent); }
-  .btn-outline:hover { background:var(--accent-bg); }
-  .btn-ghost { background:transparent; color:var(--ink-mid); }
-  .btn-ghost:hover { background:var(--bg); }
+  .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(99,102,241,0.25); }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.35); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-outline { background: var(--surface); color: var(--accent); border: 1.5px solid var(--accent); }
+  .btn-outline:hover { background: var(--accent-bg); }
+  .btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-ghost { background: transparent; color: var(--ink-mid); }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-warn { background: var(--orange); color: #fff; box-shadow: 0 2px 8px rgba(245,158,11,0.25); }
+  .btn-warn:hover { opacity: 0.9; }
 
   /* ===== OUTPUT ===== */
-  .output-area { display:none; }
-  .output-area.show { display:block; }
-
-  .output-tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:0; }
+  .output-area { display: none; }
+  .output-area.show { display: block; }
+  .output-tabs {
+    display: flex; gap: 0; border-bottom: 2px solid var(--border);
+    background: var(--surface); border-radius: var(--radius) var(--radius) 0 0;
+  }
   .output-tab {
-    padding:8px 18px; cursor:pointer; font-size:0.85rem; color:var(--ink-dim);
-    border-bottom:2px solid transparent; margin-bottom:-2px; background:none; border-top:none; border-left:none; border-right:none;
+    padding: 10px 20px; cursor: pointer; font-size: 0.83rem; color: var(--ink-dim);
+    border: none; background: transparent; font-weight: 500; transition: var(--transition);
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
   }
-  .output-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .output-tab:hover { color: var(--ink-mid); }
+  .output-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
   .output-pane {
-    background:var(--bg); border-radius:0 0 8px 8px; padding:18px;
-    white-space:pre-wrap; font-size:0.85rem; line-height:1.75; max-height:55vh;
-    overflow:auto; display:none;
+    background: var(--surface); border-radius: 0 0 var(--radius) var(--radius);
+    padding: 20px; white-space: pre-wrap; font-size: 0.86rem; line-height: 1.8;
+    max-height: 58vh; overflow: auto; display: none;
+    box-shadow: var(--shadow-sm);
   }
-  .output-pane.active { display:block; }
+  .output-pane.active { display: block; }
 
-  /* ===== STATUS BAR ===== */
-  .status-bar { font-size:0.8rem; padding:8px 0; display:flex; align-items:center; gap:8px; }
-  .status-dot { width:8px; height:8px; border-radius:50%; }
-  .status-dot.idle { background:var(--ink-dim); }
-  .status-dot.running { background:var(--accent); animation:pulse 1s infinite; }
-  .status-dot.done { background:var(--green); }
-  .status-dot.error { background:var(--red); }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .output-pane h1,.output-pane h2,.output-pane h3,.output-pane h4 { color: var(--ink); margin: 16px 0 8px; }
+  .output-pane h2 { font-size: 1.1rem; border-bottom: 2px solid var(--accent-bg); padding-bottom: 6px; }
+  .output-pane h3 { font-size: 0.95rem; color: var(--ink-mid); }
+  .output-pane table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.82rem; }
+  .output-pane th { background: var(--accent-bg); padding: 8px 12px; text-align: left; font-weight: 600; }
+  .output-pane td { padding: 8px 12px; border-top: 1px solid var(--border); }
+  .output-pane strong { color: var(--accent); }
 
-  /* ===== GUARDRAIL ===== */
-  .tag { display:inline-block; padding:3px 10px; border-radius:12px; font-size:0.75rem; margin:3px; }
-  .tag.pass { background:var(--green-bg); color:var(--green); }
-  .tag.fail { background:var(--red-bg); color:var(--red); }
-  .tag.warn { background:var(--orange-bg); color:var(--orange); }
-
-  /* ===== RESPONSIVE ===== */
-  @media (max-width:768px) {
-    .main { flex-direction:column; padding:12px 8px; }
-    .sidebar { width:100%; }
-    .header { padding:10px 12px; }
-    .header .nav { display:none; }
-    .header .logo { font-size:1.1rem; }
-    textarea { min-height:120px; font-size:0.82rem; }
-    .btn-row { flex-direction:column; }
-    .btn { width:100%; text-align:center; }
-    .card { padding:14px; margin-bottom:10px; }
-    .output-pane { max-height:40vh; font-size:0.8rem; }
-    .api-row { flex-direction:column !important; }
-    .api-row input, .api-row select { width:100%; }
+  /* ===== STATUS ===== */
+  .status-bar {
+    font-size: 0.8rem; padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border-radius: var(--radius-sm); margin-top: 10px;
+    border: 1px solid var(--border);
   }
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.idle { background: var(--ink-dim); }
+  .status-dot.running { background: var(--accent); animation: pulse 1.2s infinite; }
+  .status-dot.done { background: var(--green); }
+  .status-dot.error { background: var(--red); }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
 
-  .dim-block {
-    background:var(--bg); border:1px dashed var(--border); border-radius:8px;
-    padding:32px; text-align:center; color:var(--ink-dim); font-size:0.85rem;
-  }
+  .tag { display: inline-block; padding: 4px 12px; border-radius: 14px; font-size: 0.74rem; margin: 3px; font-weight: 500; }
+  .tag.pass { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+  .tag.fail { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+  .tag.warn { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
 
   .example-chip {
-    display:inline-block; padding:4px 12px; margin:4px; border:1px solid var(--border);
-    border-radius:14px; font-size:0.78rem; cursor:pointer; color:var(--ink-mid);
-    background:var(--surface); transition:0.15s;
+    display: inline-block; padding: 5px 14px; margin: 3px; border: 1.5px solid var(--border);
+    border-radius: 20px; font-size: 0.78rem; cursor: pointer; color: var(--ink-mid);
+    background: var(--surface); transition: var(--transition); font-weight: 500;
   }
-  .example-chip:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-bg); }
+  .example-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); transform: translateY(-1px); }
+
+  .dim-block {
+    background: var(--bg); border: 1.5px dashed var(--border); border-radius: var(--radius-sm);
+    padding: 28px; text-align: center; color: var(--ink-dim); font-size: 0.83rem;
+  }
+
+  .kb-shortcut { font-size: 0.7rem; color: var(--ink-dim); padding: 2px 6px; background: var(--bg); border-radius: 4px; border: 1px solid var(--border); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 800px) {
+    .main { flex-direction: column; padding: 12px 10px 40px; gap: 12px; }
+    .sidebar { width: 100%; }
+    .header { padding: 10px 14px; }
+    .header .nav { display: none; }
+    .header .logo { font-size: 1.1rem; }
+    textarea { min-height: 140px; font-size: 0.82rem; }
+    .btn-row { flex-direction: column; }
+    .btn { width: 100%; justify-content: center; }
+    .card { padding: 14px 16px; margin-bottom: 10px; }
+    .output-pane { max-height: 45vh; font-size: 0.8rem; padding: 14px; }
+    .api-row { flex-direction: column !important; }
+    .api-row input, .api-row select { width: 100%; }
+    .filter-row { flex-direction: column; }
+  }
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
-<div class="header">
-  <span class="logo">tt_agent</span>
-  <span class="badge">v2.0</span>
-  <div class="nav">
+<header class="header">
+  <span class="logo">🎬 tt_agent</span>
+  <span class="badge">v2.4</span>
+  <nav class="nav">
     <a href="#" onclick="showExample('shoe')">洗鞋示例</a>
     <a href="#" onclick="showExample('retail')">零售示例</a>
-    <a href="https://github.com/Raaaaay-x/tt-short-video-assistant" target="_blank">GitHub</a>
-  </div>
-</div>
+    <a href="#" onclick="showExample('knowledge')">科普示例</a>
+    <a href="https://github.com/Raaaaay-x/tt-short-video-assistant" target="_blank">GitHub ↗</a>
+  </nav>
+</header>
 
 <!-- MAIN -->
 <div class="main">
 
   <!-- SIDEBAR -->
-  <div class="sidebar">
+  <aside class="sidebar">
 
-    <!-- Workflow Steps -->
     <div class="card">
-      <h3>📋 工作流</h3>
+      <h3><span class="emoji">📋</span> 工作流</h3>
       <ul class="steps">
         <li id="step1"><span class="num">1</span> 粘贴对标逐字稿</li>
         <li id="step2"><span class="num">2</span> 五层拆解</li>
@@ -187,77 +272,68 @@
       </ul>
     </div>
 
-    <!-- Corpus Search -->
     <div class="card">
-      <h3>🔎 对标库检索</h3>
-      <input type="text" id="corpusQuery" placeholder="搜索关键词..." style="width:100%;padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin-bottom:6px;" oninput="searchCorpus()">
-      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
-        <select id="corpusHook" onchange="searchCorpus()" style="flex:1;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:0.75rem;">
-          <option value="">全部钩子</option>
-        </select>
-        <select id="corpusPlatform" onchange="searchCorpus()" style="flex:1;padding:4px 6px;border:1px solid var(--border);border-radius:6px;font-size:0.75rem;">
-          <option value="">全部平台</option>
-        </select>
+      <h3><span class="emoji">🔎</span> 对标库检索</h3>
+      <input type="text" class="search-input" id="corpusQuery" placeholder="搜索已拆解的视频..." oninput="searchCorpus()">
+      <div class="filter-row">
+        <select id="corpusHook" onchange="searchCorpus()"><option value="">全部钩子</option></select>
+        <select id="corpusPlatform" onchange="searchCorpus()"><option value="">全部平台</option></select>
       </div>
-      <div id="corpusResults" style="max-height:200px;overflow:auto;font-size:0.78rem;line-height:1.6;">
-        <span class="dim-block" style="padding:8px;font-size:0.75rem;">输入关键词或选择过滤条件</span>
+      <div class="result-list" id="corpusResults">
+        <p class="dim" style="padding:6px;">输入关键词或选择过滤条件</p>
       </div>
-      <div id="corpusStats" style="font-size:0.72rem;color:var(--ink-dim);margin-top:8px;padding-top:6px;border-top:1px solid var(--border);"></div>
+      <p id="corpusStats" style="font-size:0.7rem;color:var(--ink-dim);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);"></p>
     </div>
 
-    <!-- Topic Pool -->
     <div class="card">
-      <h3>💡 选题池</h3>
-      <div id="topicPool" style="max-height:180px;overflow:auto;font-size:0.78rem;line-height:1.6;">
-        <span class="dim-block" style="padding:8px;font-size:0.75rem;">选题池数据未加载</span>
+      <h3><span class="emoji">💡</span> 选题池</h3>
+      <div class="result-list" id="topicPool">
+        <p class="dim" style="padding:6px;">运行 comment_miner 后自动填充</p>
       </div>
     </div>
 
-    <!-- API Key -->
     <div class="card">
-      <h3>🔑 API 设置</h3>
-      <p class="dim">Key 仅存储在你的浏览器中</p>
-      <div class="api-row" style="flex-direction:column;gap:6px;">
+      <h3><span class="emoji">🔑</span> API 设置</h3>
+      <p class="dim">Key 仅存于你的浏览器本地</p>
+      <div class="api-row">
         <select id="provider" onchange="saveKey()">
           <option value="deepseek">DeepSeek</option>
           <option value="step">阶跃星辰 Step 3.7</option>
           <option value="custom">自定义</option>
         </select>
         <input type="password" id="apiKey" placeholder="粘贴 API Key">
-        <button onclick="saveKey()">保存</button>
+        <button onclick="saveKey()">保存 Key</button>
       </div>
-      <div id="keyStatus" style="font-size:0.75rem;margin-top:6px;color:var(--ink-dim);"></div>
+      <p id="keyStatus" style="font-size:0.72rem;margin-top:6px;"></p>
     </div>
 
-    <!-- Deconstruction Dimensions -->
     <div class="card">
-      <h3>🔍 拆解五维度</h3>
-      <p class="dim" style="margin-bottom:8px;">每条对标视频都会分析:</p>
-      <div style="font-size:0.8rem;line-height:1.8;color:var(--ink-mid);">
-        <div>1. 钩子类型 <span style="color:var(--ink-dim)">(前3秒)</span></div>
-        <div>2. 叙事结构 <span style="color:var(--ink-dim)">(时间线+密度)</span></div>
-        <div>3. 情绪曲线 <span style="color:var(--ink-dim)">(起→转→落)</span></div>
-        <div>4. 口播节奏 <span style="color:var(--ink-dim)">(句长+停顿)</span></div>
-        <div>5. 爆款假设 <span style="color:var(--accent);font-weight:500;">(可证伪)</span></div>
+      <h3><span class="emoji">🔍</span> 拆解五维度</h3>
+      <p class="dim" style="margin-bottom:6px;">每条对标视频都会分析:</p>
+      <div style="font-size:0.78rem;line-height:2;color:var(--ink-mid);">
+        ① 钩子类型 <span style="color:var(--ink-dim)">— 前3秒抓人方式</span><br>
+        ② 叙事结构 <span style="color:var(--ink-dim)">— 时间线+信息密度</span><br>
+        ③ 情绪曲线 <span style="color:var(--ink-dim)">— 起→转→落</span><br>
+        ④ 口播节奏 <span style="color:var(--ink-dim)">— 句长+停顿位</span><br>
+        ⑤ 爆款假设 <span style="color:var(--accent);font-weight:600;">— 可证伪的核心洞察</span>
       </div>
     </div>
 
-  </div>
+  </aside>
 
   <!-- MAIN CONTENT -->
-  <div class="content">
+  <main class="content">
 
-    <!-- Input Card -->
     <div class="card">
-      <h3>📹 对标视频逐字稿</h3>
-      <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+      <h3><span class="emoji">📹</span> 对标视频逐字稿</h3>
+      <div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <div>
           <span class="example-chip" onclick="showExample('shoe')">👟 洗鞋效果展示</span>
           <span class="example-chip" onclick="showExample('retail')">🏪 鞋城零售</span>
           <span class="example-chip" onclick="showExample('knowledge')">📖 材质科普</span>
         </div>
-        <label style="font-size:0.8rem;color:var(--ink-mid);cursor:pointer;user-select:none;">
-          <input type="checkbox" id="batchMode" onchange="toggleBatchMode()" style="margin-right:4px;">批量模式
+        <label style="font-size:0.8rem;color:var(--ink-mid);cursor:pointer;user-select:none;white-space:nowrap;">
+          <input type="checkbox" id="batchMode" onchange="toggleBatchMode()" style="margin-right:4px;accent-color:var(--accent);">批量模式
         </label>
       </div>
       <textarea id="transcript" placeholder="粘贴对标视频的逐字稿...
@@ -271,46 +347,39 @@
 也可以直接粘贴纯文本口播。"></textarea>
       <div class="btn-row">
         <button class="btn btn-primary" id="btnFull" onclick="runFull()">⚡ 一键全流程</button>
-        <button class="btn btn-outline" id="btnDecon" onclick="runDeconstruct()">1️⃣ 先拆解</button>
-        <button class="btn btn-outline" id="btnRewrite" onclick="runRewrite()" disabled>2️⃣ 再二创</button>
-        <button class="btn btn-primary" id="btnBatch" onclick="runBatch()" style="display:none;background:var(--orange);">📊 批量分析</button>
+        <button class="btn btn-outline" id="btnDecon" onclick="runDeconstruct()">1 先拆解</button>
+        <button class="btn btn-outline" id="btnRewrite" onclick="runRewrite()" disabled>2 再二创</button>
+        <button class="btn btn-warn" id="btnBatch" onclick="runBatch()" style="display:none;">📊 批量分析</button>
         <button class="btn btn-ghost" onclick="downloadResult()">💾 下载报告</button>
       </div>
       <div class="status-bar">
         <span class="status-dot idle" id="statusDot"></span>
-        <span id="statusText" style="color:var(--ink-dim);">就绪 — 粘贴逐字稿后点击"一键全流程"</span>
-        <span id="statusTimer" style="color:var(--ink-dim);font-size:0.75rem;"></span>
+        <span id="statusText" style="color:var(--ink-dim);">就绪 — 粘贴逐字稿后点击「一键全流程」</span>
+        <span id="statusTimer" style="color:var(--ink-dim);font-size:0.75rem;margin-left:auto;"></span>
       </div>
     </div>
 
-    <!-- Output Area -->
     <div class="output-area" id="outputArea">
       <div class="output-tabs">
         <button class="output-tab active" onclick="switchOutputTab('decon')">📊 拆解报告</button>
         <button class="output-tab" onclick="switchOutputTab('script')">✍️ 二创脚本</button>
         <button class="output-tab" onclick="switchOutputTab('guardrail')">🛡️ 合规检查</button>
       </div>
-      <div class="output-pane active" id="paneDecon">
-        <div class="dim-block">点击上方按钮开始分析</div>
-      </div>
-      <div class="output-pane" id="paneScript">
-        <div class="dim-block">先完成拆解，再生成脚本</div>
-      </div>
-      <div class="output-pane" id="paneGuardrail">
-        <div class="dim-block">脚本生成后自动检查</div>
-      </div>
+      <div class="output-pane active" id="paneDecon"><div class="dim-block">点击上方按钮开始分析</div></div>
+      <div class="output-pane" id="paneScript"><div class="dim-block">先完成拆解，再生成脚本</div></div>
+      <div class="output-pane" id="paneGuardrail"><div class="dim-block">脚本生成后自动检查</div></div>
     </div>
 
-  </div>
+  </main>
 </div>
 
+<script src="corpus_data.js"></script>
+<script src="topic_pool_data.js"></script>
 <script>
 // ═══════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════
-let deconResult = null;
-let scriptResult = null;
-let guardrailIssues = [];
+let deconResult = null, scriptResult = null, guardrailIssues = [];
 
 // ═══════════════════════════════════════════
 // EXAMPLES
@@ -344,74 +413,29 @@ const EXAMPLES = {
 
 function showExample(type) {
   document.getElementById('transcript').value = EXAMPLES[type] || '';
+  document.getElementById('transcript').focus();
 }
 
+// ═══════════════════════════════════════════
+// BATCH MODE
+// ═══════════════════════════════════════════
 function toggleBatchMode() {
   const batch = document.getElementById('batchMode').checked;
   const ta = document.getElementById('transcript');
   const btnBatch = document.getElementById('btnBatch');
   if (batch) {
-    ta.placeholder = '批量模式: 用 --- 分隔多个逐字稿\n\n逐字稿 1\n[0:00-0:03] 【画面】...\n【口播】...\n\n---\n\n逐字稿 2\n[0:00-0:03] 【画面】...\n【口播】...';
+    ta.placeholder = '批量模式: 用 --- 分隔多个逐字稿\n逐字稿 1\n[0:00-0:03] 【画面】...\n【口播】...\n---\n逐字稿 2\n...';
     ta.style.minHeight = '300px';
-    btnBatch.style.display = 'inline-block';
+    btnBatch.style.display = 'inline-flex';
   } else {
-    ta.placeholder = '粘贴对标视频的逐字稿...\n\n格式示例:\n[0:00-0:03] 【画面】脏鞋特写\n【口播】你看这双鞋进来的样子...';
-    ta.style.minHeight = '180px';
+    ta.placeholder = '粘贴对标视频的逐字稿...';
+    ta.style.minHeight = '190px';
     btnBatch.style.display = 'none';
   }
 }
 
-async function runBatch() {
-  const raw = document.getElementById('transcript').value.trim();
-  if (!raw) { setStatus('error','请粘贴多个逐字稿 (用 --- 分隔)'); return; }
-
-  const transcripts = raw.split(/\n*---+\n*/).filter(t => t.trim());
-  if (transcripts.length < 2) {
-    setStatus('error','批量模式需要至少 2 个逐字稿 (用 --- 分隔)');
-    return;
-  }
-
-  document.getElementById('outputArea').classList.add('show');
-  switchOutputTab('decon');
-
-  let batchReport = `# 批量竞品分析报告 | ${transcripts.length} 条视频\n\n`;
-  let summary = [];
-
-  for (let i = 0; i < transcripts.length; i++) {
-    setStatus('running', `批量分析: ${i+1}/${transcripts.length} (拆解中...)`);
-    updateSteps(2);
-
-    try {
-      const prompt = buildDeconstructPrompt(transcripts[i]);
-      const result = await callLLM(prompt, '你是短视频内容研究员。请用中文, Markdown格式回复。只输出核心5个维度的拆解, 不超过500字。');
-      batchReport += `## 视频 ${i+1}\n\n${result}\n\n---\n\n`;
-
-      // Extract brief summary
-      const hookMatch = result.match(/钩子[类型]*[：:]\s*(.+)/);
-      const hypMatch = result.match(/爆款假设[：:]\s*(.+)/);
-      summary.push({
-        num: i+1,
-        hook: hookMatch ? hookMatch[1].slice(0,40) : '未识别',
-        hypothesis: hypMatch ? hypMatch[1].slice(0,80) : '未识别',
-      });
-    } catch(e) {
-      batchReport += `## 视频 ${i+1}\n\n分析失败: ${e.message}\n\n---\n\n`;
-    }
-  }
-
-  // Summary table
-  batchReport = `# 批量竞品分析报告 | ${transcripts.length} 条视频\n\n## 汇总对比\n\n| # | 钩子类型 | 爆款假设 |\n|---|---------|--------|\n` +
-    summary.map(s => `| ${s.num} | ${s.hook} | ${s.hypothesis} |`).join('\n') +
-    `\n\n---\n\n## 逐条拆解\n\n` + batchReport.split('# 批量')[1] || batchReport;
-
-  deconResult = batchReport;
-  document.getElementById('paneDecon').innerHTML = mdToHtml(batchReport);
-  setStatus('done', `批量完成: ${transcripts.length} 条视频已分析 ✅`);
-  updateSteps(5);
-}
-
 // ═══════════════════════════════════════════
-// API KEY
+// API
 // ═══════════════════════════════════════════
 function saveKey() {
   const key = document.getElementById('apiKey').value.trim();
@@ -423,29 +447,9 @@ function saveKey() {
     document.getElementById('keyStatus').style.color = 'var(--green)';
   }
 }
+function getKey() { return document.getElementById('apiKey').value.trim() || localStorage.getItem('tt_agent_api_key') || ''; }
+function getProv() { return document.getElementById('provider').value || localStorage.getItem('tt_agent_provider') || 'deepseek'; }
 
-function getKey() {
-  return document.getElementById('apiKey').value.trim() || localStorage.getItem('tt_agent_api_key') || '';
-}
-function getProv() {
-  return document.getElementById('provider').value || localStorage.getItem('tt_agent_provider') || 'deepseek';
-}
-
-// ═══════════════════════════════════════════
-// STATUS
-// ═══════════════════════════════════════════
-function setStatus(state, text, timer='') {
-  const dot = document.getElementById('statusDot');
-  const st = document.getElementById('statusText');
-  const tm = document.getElementById('statusTimer');
-  dot.className = 'status-dot ' + state;
-  st.textContent = text;
-  tm.textContent = timer;
-}
-
-// ═══════════════════════════════════════════
-// API CALL
-// ═══════════════════════════════════════════
 const PROVIDERS = {
   deepseek: { url:'https://api.deepseek.com/chat/completions', model:'deepseek-chat' },
   step: { url:'https://api.stepfun.com/v1/chat/completions', model:'step-3.7-flash' },
@@ -455,30 +459,19 @@ const PROVIDERS = {
 async function callLLM(prompt, systemPrompt) {
   const key = getKey();
   if (!key) throw new Error('请先输入并保存 API Key');
-
-  let prov = PROVIDERS[getProv()];
-  if (!prov) throw new Error('未知的模型服务');
-
-  let url = prov.url;
-  let model = prov.model;
-  if (getProv() === 'custom') {
-    url = prompt('API endpoint URL:') || '';
-    model = prompt('Model name:') || '';
-  }
-  if (!url || !model) throw new Error('API 配置不完整');
-
+  let p = PROVIDERS[getProv()];
+  let url = p.url, model = p.model;
+  if (getProv()==='custom') { url=prompt('API URL:')||''; model=prompt('Model:')||''; }
+  if (!url||!model) throw new Error('API 配置不完整');
   const msgs = [];
-  if (systemPrompt) msgs.push({role:'system', content:systemPrompt});
-  msgs.push({role:'user', content:prompt});
-
+  if (systemPrompt) msgs.push({role:'system',content:systemPrompt});
+  msgs.push({role:'user',content:prompt});
   const resp = await fetch(url, {
-    method:'POST',
-    headers: {'Content-Type':'application/json', 'Authorization':`Bearer ${key}`},
-    body: JSON.stringify({model, messages:msgs, temperature:0.7, max_tokens:4000}),
+    method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},
+    body:JSON.stringify({model,messages:msgs,temperature:0.7,max_tokens:4000}),
   });
   if (!resp.ok) { const e=await resp.text(); throw new Error(`API ${resp.status}: ${e.slice(0,200)}`); }
-  const data = await resp.json();
-  return data.choices[0].message.content;
+  return (await resp.json()).choices[0].message.content;
 }
 
 // ═══════════════════════════════════════════
@@ -489,7 +482,7 @@ function buildDeconstructPrompt(t) {
 
 ${t}
 
-请输出 (Markdown 格式):
+输出 (Markdown):
 
 ## 1. 钩子类型
 前3秒用了什么钩子? (对比/反常识/身份认同/教学展示) 为什么有效?
@@ -507,7 +500,7 @@ ${t}
 
 ## 5. 爆款假设 (最重要)
 这条视频能火, 核心原因是什么? 请给一个可证伪的假设。
-这个爆点搬到鞋店/洗鞋/零售行业应该怎么做? 给出具体建议。`;
+这个爆点搬到鞋店/洗鞋/零售行业应该怎么做?`;
 }
 
 function buildRewritePrompt(transcript, decon) {
@@ -549,252 +542,194 @@ function checkGuardrail(text) {
   const privacyFlags = ['儿子叫','女儿叫','我家住','手机号','身份证','一个人看店'];
   const personaBad = ['家人们','宝子们','绝绝子','冲','yyds','给我冲'];
   const personaGood = ['我们家','我们店里','房山这边','你看','师傅'];
-
-  for (const w of adWords) if (text.includes(w)) issues.push({t:'fail', msg:`广告法: 禁用词「${w}」建议替换`});
-  for (const w of privacyFlags) if (text.includes(w)) issues.push({t:'fail', msg:`隐私风险: 包含「${w}」建议模糊化`});
-  for (const w of personaBad) if (text.includes(w)) issues.push({t:'fail', msg:`人设不符: 「${w}」过度网感, 删除`});
-  const hasGood = personaGood.some(w => text.includes(w));
-  if (!hasGood) issues.push({t:'warn', msg:'人设: 缺少本地/真人感元素 (我们家/你看/师傅)'});
-
+  for (const w of adWords) if (text.includes(w)) issues.push({t:'fail',msg:`广告法: 「${w}」建议替换`});
+  for (const w of privacyFlags) if (text.includes(w)) issues.push({t:'fail',msg:`隐私风险: 「${w}」建议模糊化`});
+  for (const w of personaBad) if (text.includes(w)) issues.push({t:'fail',msg:`人设不符: 「${w}」删除`});
+  if (!personaGood.some(w=>text.includes(w))) issues.push({t:'warn',msg:'人设: 缺少本地/真人感元素 (我们家/你看/师傅)'});
   return issues;
 }
-
 function renderGuardrail(issues) {
-  if (!issues || issues.length === 0) return '<span class="tag pass">✅ 三项检查全部通过</span>';
-  return issues.map(i => `<span class="tag ${i.t}">${i.msg}</span>`).join('<br>');
+  if (!issues||!issues.length) return '<span class="tag pass">✅ 三项检查全部通过</span>';
+  return issues.map(i=>`<span class="tag ${i.t}">${i.msg}</span>`).join('<br>');
 }
 
 // ═══════════════════════════════════════════
-// MARKDOWN RENDER
+// MARKDOWN
 // ═══════════════════════════════════════════
 function mdToHtml(md) {
   return md
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/^### (.+)$/gm,'<h4 style="margin-top:16px">$1</h4>')
-    .replace(/^## (.+)$/gm,'<h3 style="margin-top:20px;color:var(--accent)">$1</h3>')
+    .replace(/^## (.+)$/gm,'<h3 style="margin-top:20px;color:var(--accent);border-bottom:2px solid var(--accent-bg);padding-bottom:6px;">$1</h3>')
     .replace(/^# (.+)$/gm,'<h2 style="margin-top:20px">$1</h2>')
     .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
     .replace(/^- (.+)$/gm,'<li style="margin-left:20px">$1</li>')
-    .replace(/\|(.+)\|/g, (m) => m.replace(/\|/g,'</td><td>').replace(/^<\/td><td>/,'<tr><td>').replace(/<\/td><td>$/,'</td></tr>'))
+    .replace(/\|(.+)\|/g, m => m.replace(/\|/g,'</td><td>').replace(/^<\/td><td>/,'<tr><td>').replace(/<\/td><td>$/,'</td></tr>'))
     .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
 }
 
 // ═══════════════════════════════════════════
 // ACTIONS
 // ═══════════════════════════════════════════
-async function runDeconstruct() {
-  const t = document.getElementById('transcript').value.trim();
-  if (!t) { setStatus('error','请先粘贴逐字稿'); return; }
-  setStatus('running','正在拆解 (五层分析, 约15-30秒)...');
-  updateSteps(2);
-  disableBtn('btnDecon', true);
+function setStatus(state, text, timer='') {
+  document.getElementById('statusDot').className = 'status-dot '+state;
+  document.getElementById('statusText').textContent = text;
+  document.getElementById('statusTimer').textContent = timer;
+}
+function updateSteps(active) {
+  for (let i=1;i<=5;i++) {
+    const li = document.getElementById('step'+i);
+    li.classList.remove('active','done');
+    if (i<active) li.classList.add('done');
+    if (i===active) li.classList.add('active');
+  }
+}
+function switchOutputTab(tab) {
+  document.querySelectorAll('.output-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='decon'&&i===0)||(tab==='script'&&i===1)||(tab==='guardrail'&&i===2)));
+  document.querySelectorAll('.output-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById(tab==='decon'?'paneDecon':tab==='script'?'paneScript':'paneGuardrail').classList.add('active');
+}
 
-  try {
-    const prompt = buildDeconstructPrompt(t);
-    const result = await callLLM(prompt, '你是短视频内容研究员。请用中文, Markdown格式回复。');
-    deconResult = result;
-    document.getElementById('paneDecon').innerHTML = mdToHtml(result);
+async function runDeconstruct() {
+  const t=document.getElementById('transcript').value.trim();
+  if(!t){setStatus('error','请先粘贴逐字稿');return;}
+  setStatus('running','正在五层拆解 (约 15-30 秒)...');
+  updateSteps(2);
+  document.getElementById('btnDecon').disabled=true;
+  try{
+    const r=await callLLM(buildDeconstructPrompt(t),'你是短视频内容研究员。请用中文, Markdown格式回复。');
+    deconResult=r;
+    document.getElementById('paneDecon').innerHTML=mdToHtml(r);
     document.getElementById('outputArea').classList.add('show');
-    document.getElementById('btnRewrite').disabled = false;
+    document.getElementById('btnRewrite').disabled=false;
     setStatus('done','拆解完成 ✅');
     updateSteps(3);
-  } catch(e) {
-    setStatus('error',`拆解失败: ${e.message}`);
-  }
-  disableBtn('btnDecon', false);
+  }catch(e){setStatus('error',`拆解失败: ${e.message}`);}
+  document.getElementById('btnDecon').disabled=false;
 }
 
 async function runRewrite() {
-  if (!deconResult) { setStatus('error','请先完成拆解'); return; }
-  const t = document.getElementById('transcript').value.trim();
-  setStatus('running','正在二创脚本 (约15-30秒)...');
+  if(!deconResult){setStatus('error','请先完成拆解');return;}
+  const t=document.getElementById('transcript').value.trim();
+  setStatus('running','正在二创脚本 (约 15-30 秒)...');
   updateSteps(3);
-  disableBtn('btnRewrite', true);
-
-  try {
-    const prompt = buildRewritePrompt(t, deconResult);
-    const result = await callLLM(prompt, '你是芮玛鞋城的短视频编导。请用中文回复。');
-    scriptResult = result;
-    guardrailIssues = checkGuardrail(result);
-    document.getElementById('paneScript').innerHTML = mdToHtml(result);
-    document.getElementById('paneGuardrail').innerHTML = renderGuardrail(guardrailIssues);
+  document.getElementById('btnRewrite').disabled=true;
+  try{
+    const r=await callLLM(buildRewritePrompt(t,deconResult),'你是芮玛鞋城的短视频编导。请用中文回复。');
+    scriptResult=r; guardrailIssues=checkGuardrail(r);
+    document.getElementById('paneScript').innerHTML=mdToHtml(r);
+    document.getElementById('paneGuardrail').innerHTML=renderGuardrail(guardrailIssues);
     document.getElementById('outputArea').classList.add('show');
     switchOutputTab('script');
     setStatus('done','二创完成 ✅');
     updateSteps(4);
-  } catch(e) {
-    setStatus('error',`二创失败: ${e.message}`);
-  }
-  disableBtn('btnRewrite', false);
+  }catch(e){setStatus('error',`二创失败: ${e.message}`);}
+  document.getElementById('btnRewrite').disabled=false;
 }
 
 async function runFull() {
-  // Reset
-  deconResult = null; scriptResult = null; guardrailIssues = [];
-  document.getElementById('paneDecon').innerHTML = '<div class="dim-block">分析中...</div>';
-  document.getElementById('paneScript').innerHTML = '<div class="dim-block">等待拆解完成...</div>';
-  document.getElementById('paneGuardrail').innerHTML = '<div class="dim-block">等待脚本生成...</div>';
+  deconResult=null;scriptResult=null;guardrailIssues=[];
+  document.getElementById('paneDecon').innerHTML='<div class="dim-block">分析中...</div>';
+  document.getElementById('paneScript').innerHTML='<div class="dim-block">等待拆解完成...</div>';
+  document.getElementById('paneGuardrail').innerHTML='<div class="dim-block">等待脚本生成...</div>';
   document.getElementById('outputArea').classList.add('show');
-  switchOutputTab('decon');
-  updateSteps(1);
-
-  const t0 = Date.now();
+  switchOutputTab('decon'); updateSteps(1);
+  const t0=Date.now();
   await runDeconstruct();
-  if (deconResult) {
-    await runRewrite();
-  }
-  if (scriptResult) {
-    const elapsed = ((Date.now()-t0)/1000).toFixed(0);
-    setStatus('done',`全流程完成 (${elapsed}s) ✅`, '');
-    updateSteps(5);
-  }
+  if(deconResult) await runRewrite();
+  if(scriptResult){setStatus('done',`全流程完成 (${((Date.now()-t0)/1000).toFixed(0)}s) ✅`);updateSteps(5);}
 }
 
-function disableBtn(id, disabled) {
-  const btn = document.getElementById(id);
-  btn.disabled = disabled;
-  btn.style.opacity = disabled ? '0.5' : '1';
-}
-
-function updateSteps(active) {
-  for (let i=1; i<=5; i++) {
-    const li = document.getElementById('step'+i);
-    li.classList.remove('active','done');
-    if (i < active) li.classList.add('done');
-    if (i === active) li.classList.add('active');
+async function runBatch() {
+  const raw=document.getElementById('transcript').value.trim();
+  if(!raw){setStatus('error','请粘贴多个逐字稿 (用 --- 分隔)');return;}
+  const transcripts=raw.split(/\n*---+\n*/).filter(t=>t.trim());
+  if(transcripts.length<2){setStatus('error','需要至少 2 个逐字稿');return;}
+  document.getElementById('outputArea').classList.add('show');switchOutputTab('decon');
+  let report=`# 批量竞品分析报告 | ${transcripts.length} 条视频\n\n## 汇总对比\n\n| # | 钩子类型 | 爆款假设 |\n|---|---------|--------|\n`;
+  const summary=[];
+  for(let i=0;i<transcripts.length;i++){
+    setStatus('running',`批量: ${i+1}/${transcripts.length}...`);
+    try{
+      const r=await callLLM(buildDeconstructPrompt(transcripts[i]),'你是短视频内容研究员。用中文回复, 只输出五维拆解, 不超过500字。');
+      report+=`## 视频 ${i+1}\n\n${r}\n\n---\n\n`;
+      const hm=r.match(/钩子[类型]*[：:]\s*(.+)/), hyp=r.match(/爆款假设[：:]\s*(.+)/);
+      summary.push({num:i+1,hook:hm?hm[1].slice(0,40):'未识别',hypothesis:hyp?hyp[1].slice(0,80):'未识别'});
+    }catch(e){report+=`## 视频 ${i+1}\n\n失败: ${e.message}\n\n---\n\n`;}
   }
-}
-
-function switchOutputTab(tab) {
-  document.querySelectorAll('.output-tab').forEach((t,i) => {
-    t.classList.toggle('active', (tab==='decon'&&i===0)||(tab==='script'&&i===1)||(tab==='guardrail'&&i===2));
-  });
-  document.querySelectorAll('.output-pane').forEach(p => p.classList.remove('active'));
-  const paneId = tab==='decon' ? 'paneDecon' : tab==='script' ? 'paneScript' : 'paneGuardrail';
-  document.getElementById(paneId).classList.add('active');
+  const sumTable=summary.map(s=>`| ${s.num} | ${s.hook} | ${s.hypothesis} |`).join('\n');
+  report=report.replace('## 汇总对比',`## 汇总对比\n\n${sumTable}`);
+  deconResult=report;
+  document.getElementById('paneDecon').innerHTML=mdToHtml(report);
+  setStatus('done',`批量完成: ${transcripts.length} 条视频 ✅`);updateSteps(5);
 }
 
 function downloadResult() {
-  let text = '# tt_agent 分析报告\n\n';
-  if (deconResult) text += '## 📊 拆解报告\n\n' + deconResult + '\n\n---\n\n';
-  if (scriptResult) text += '## ✍️ 二创脚本\n\n' + scriptResult + '\n\n';
-  if (guardrailIssues.length) text += '## 🛡️ 合规检查\n\n' + guardrailIssues.map(i=>`- ${i.msg}`).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([text],{type:'text/markdown'}));
-  a.download = 'tt_agent_report.md'; a.click();
+  let t='# tt_agent 分析报告\n\n';
+  if(deconResult) t+='## 📊 拆解报告\n\n'+deconResult+'\n\n---\n\n';
+  if(scriptResult) t+='## ✍️ 二创脚本\n\n'+scriptResult+'\n\n';
+  if(guardrailIssues.length) t+='## 🛡️ 合规检查\n\n'+guardrailIssues.map(i=>`- ${i.msg}`).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([t],{type:'text/markdown'}));
+  a.download='tt_agent_report.md';a.click();
 }
 
-<script src="corpus_data.js"></script>
-<script src="topic_pool_data.js"></script>
-<script>
 // ═══════════════════════════════════════════
 // CORPUS SEARCH
 // ═══════════════════════════════════════════
-function initCorpusSearch() {
-  if (typeof CORPUS_DATA === 'undefined') {
-    document.getElementById('corpusStats').textContent = '对标库数据未加载';
-    return;
-  }
-  const data = CORPUS_DATA;
-  document.getElementById('corpusStats').textContent = `${data.length} 条对标记录`;
-
-  // Populate filter dropdowns
-  const hooks = [...new Set(data.map(r=>r.hook_type).filter(Boolean))].sort();
-  const platforms = [...new Set(data.map(r=>r.platform).filter(Boolean))].sort();
-  const hookSel = document.getElementById('corpusHook');
-  const platSel = document.getElementById('corpusPlatform');
-  hooks.forEach(h => { const o=document.createElement('option'); o.value=h; o.textContent=h; hookSel.appendChild(o); });
-  platforms.forEach(p => { const o=document.createElement('option'); o.value=p; o.textContent=p; platSel.appendChild(o); });
-
-  // Show initial results
+function initCorpusSearch(){
+  if(typeof CORPUS_DATA==='undefined'){document.getElementById('corpusStats').textContent='对标库数据未加载';return;}
+  const d=CORPUS_DATA;
+  document.getElementById('corpusStats').textContent=`${d.length} 条对标记录 · ${d.filter(r=>r.has_experiment).length} 个A/B实验`;
+  const hooks=[...new Set(d.map(r=>r.hook_type).filter(Boolean))].sort();
+  const plats=[...new Set(d.map(r=>r.platform).filter(Boolean))].sort();
+  const hs=document.getElementById('corpusHook'),ps=document.getElementById('corpusPlatform');
+  hooks.forEach(h=>{const o=document.createElement('option');o.value=h;o.textContent=h;hs.appendChild(o);});
+  plats.forEach(p=>{const o=document.createElement('option');o.value=p;o.textContent=p;ps.appendChild(o);});
   searchCorpus();
 }
-
-function searchCorpus() {
-  if (typeof CORPUS_DATA === 'undefined') return;
-  const q = (document.getElementById('corpusQuery').value||'').toLowerCase();
-  const hook = document.getElementById('corpusHook').value;
-  const plat = document.getElementById('corpusPlatform').value;
-
-  let results = CORPUS_DATA;
-  if (q) {
-    const kws = q.split(/\s+/);
-    results = results.filter(r => {
-      const txt = [r.title, ...r.tags, r.hypothesis].join(' ').toLowerCase();
-      return kws.some(kw => txt.includes(kw));
-    });
-  }
-  if (hook) results = results.filter(r => r.hook_type === hook);
-  if (plat) results = results.filter(r => r.platform === plat);
-
-  // Sort by score desc
-  results.sort((a,b) => (b.migrate_score||0) - (a.migrate_score||0));
-
-  const container = document.getElementById('corpusResults');
-  if (results.length === 0) {
-    container.innerHTML = '<div style="padding:8px;color:var(--ink-dim);font-size:0.75rem;">无匹配结果</div>';
-    return;
-  }
-
-  container.innerHTML = results.slice(0,15).map(r => `
-    <div style="padding:4px 0;border-bottom:1px solid var(--border);cursor:pointer;"
-         title="${(r.hypothesis||'').replace(/"/g,'&quot;')}">
-      <div style="font-weight:500;">${r.hook_type ? '<span style="color:var(--accent)">['+r.hook_type+']</span> ' : ''}${r.title}</div>
-      <div style="color:var(--ink-dim);font-size:0.72rem;">
-        ${r.platform} · ${r.date} · 适配度 ${r.migrate_score}/5
-        ${r.has_experiment ? ' · 🧪AB测试' : ''}
-        ${r.tags.length ? ' · '+r.tags.slice(0,3).join(', ') : ''}
-      </div>
-    </div>
-  `).join('');
+function searchCorpus(){
+  if(typeof CORPUS_DATA==='undefined') return;
+  const q=(document.getElementById('corpusQuery').value||'').toLowerCase();
+  const hook=document.getElementById('corpusHook').value,plat=document.getElementById('corpusPlatform').value;
+  let r=CORPUS_DATA;
+  if(q){const ks=q.split(/\s+/);r=r.filter(x=>ks.some(k=>(x.title+' '+x.tags.join(' ')+x.hypothesis).toLowerCase().includes(k)));}
+  if(hook) r=r.filter(x=>x.hook_type===hook);
+  if(plat) r=r.filter(x=>x.platform===plat);
+  r.sort((a,b)=>(b.migrate_score||0)-(a.migrate_score||0));
+  const c=document.getElementById('corpusResults');
+  if(!r.length){c.innerHTML='<p class="dim" style="padding:6px;">无匹配结果</p>';return;}
+  c.innerHTML=r.slice(0,15).map(x=>`<div class="result-item"><div class="r-title">${x.hook_type?'<span class="pill pill-tag">'+x.hook_type+'</span> ':''}${x.title}</div><div class="r-meta">${x.platform} · ${x.date} · 适配 ${x.migrate_score}/5${x.has_experiment?' · 🧪':''}${x.tags.length?' · '+x.tags.slice(0,3).join(', '):''}</div></div>`).join('');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // existing init...
-  const key = localStorage.getItem('tt_agent_api_key');
-  const prov = localStorage.getItem('tt_agent_provider');
-  if (key) {
-    document.getElementById('apiKey').value = key;
-    document.getElementById('keyStatus').textContent = '已加载 ✅';
-    document.getElementById('keyStatus').style.color = 'var(--green)';
-  }
-  if (prov) document.getElementById('provider').value = prov;
+// ═══════════════════════════════════════════
+// TOPIC POOL
+// ═══════════════════════════════════════════
+function initTopicPool(){
+  const el=document.getElementById('topicPool');
+  if(typeof TOPIC_POOL==='undefined'||!TOPIC_POOL.length){el.innerHTML='<p class="dim" style="padding:6px;">暂无选题 — 运行 <code>comment_miner.py</code> 后自动填充</p>';return;}
+  const topics=TOPIC_POOL.filter(t=>t.status==='new');
+  const o={high:0,medium:1,low:2};
+  topics.sort((a,b)=>(o[a.priority]||1)-(o[b.priority]||1));
+  el.innerHTML=topics.slice(0,10).map(t=>`<div class="topic-pool-item"><div class="tp-title"><span class="pill ${t.priority==='high'?'pill-high':'pill-medium'}">${t.priority==='high'?'高优先':'待规划'}</span> [${t.content_type||'未知'}] ${t.title}</div></div>`).join('')||'<p class="dim" style="padding:6px;">选题池为空</p>';
+}
 
-  initCorpusSearch();
-  initTopicPool();
-
-  // Mobile: collapse sidebar cards
-  if (window.innerWidth < 768) {
-    document.querySelectorAll('.sidebar .card:not(:first-child)').forEach(c => {
-      c.querySelector('h3').style.cursor = 'pointer';
-      c.querySelector('h3').addEventListener('click', () => {
-        const body = c.querySelector('div') || c.querySelector('p') || c.querySelector('ul');
-        if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
-      });
-    });
-  }
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  const key=localStorage.getItem('tt_agent_api_key'),prov=localStorage.getItem('tt_agent_provider');
+  if(key){document.getElementById('apiKey').value=key;document.getElementById('keyStatus').textContent='已加载 ✅';document.getElementById('keyStatus').style.color='var(--green)';}
+  if(prov) document.getElementById('provider').value=prov;
+  initCorpusSearch();initTopicPool();
 });
 
-function initTopicPool() {
-  if (typeof TOPIC_POOL === 'undefined' || !TOPIC_POOL.length) {
-    document.getElementById('topicPool').innerHTML = '<div style="padding:8px;color:var(--ink-dim);font-size:0.75rem;">暂无选题 — 运行 comment_miner 后自动填充</div>';
-    return;
+// Keyboard shortcut: Cmd+Enter to run full pipeline
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&document.activeElement===document.getElementById('transcript')){
+    e.preventDefault();runFull();
   }
-  const topics = TOPIC_POOL.filter(t => t.status === 'new');
-  const priorityOrder = {high:0, medium:1, low:2};
-  topics.sort((a,b) => (priorityOrder[a.priority]||1) - (priorityOrder[b.priority]||1));
-
-  document.getElementById('topicPool').innerHTML = topics.slice(0,10).map(t => `
-    <div style="padding:4px 0;border-bottom:1px solid var(--border);">
-      <span style="font-size:0.65rem;padding:1px 6px;border-radius:8px;margin-right:4px;
-        ${t.priority==='high'?'background:var(--red-bg);color:var(--red)':'background:var(--bg);color:var(--ink-dim)'}">
-        ${t.priority==='high'?'高优先':'待规划'}
-      </span>
-      <span style="font-size:0.7rem;color:var(--ink-dim);">[${t.content_type||'未知'}]</span>
-      <div style="font-weight:500;">${t.title}</div>
-    </div>
-  `).join('') || '<div style="padding:8px;color:var(--ink-dim);">选题池为空</div>';
-}
+});
 </script>
 </body>
 </html>
