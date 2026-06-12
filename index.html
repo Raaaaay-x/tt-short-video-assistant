@@ -363,10 +363,12 @@
       <div class="output-tabs">
         <button class="output-tab active" onclick="switchOutputTab('decon')">📊 拆解报告</button>
         <button class="output-tab" onclick="switchOutputTab('script')">✍️ 二创脚本</button>
-        <button class="output-tab" onclick="switchOutputTab('guardrail')">🛡️ 合规检查</button>
+        <button class="output-tab" onclick="switchOutputTab('filming')">🎥 拍摄指南</button>
+        <button class="output-tab" onclick="switchOutputTab('guardrail')">🛡️ 合规</button>
       </div>
       <div class="output-pane active" id="paneDecon"><div class="dim-block">点击上方按钮开始分析</div></div>
       <div class="output-pane" id="paneScript"><div class="dim-block">先完成拆解，再生成脚本</div></div>
+      <div class="output-pane" id="paneFilming"><div class="dim-block">脚本生成后自动提取拍摄指南</div></div>
       <div class="output-pane" id="paneGuardrail"><div class="dim-block">脚本生成后自动检查</div></div>
     </div>
 
@@ -522,9 +524,23 @@ ${decon.slice(0, 1200)}
 5. 口吻: 北京本地口语 (真不错/可以看看/挺值的/还行)
 6. 场景: 只在店内, 拒绝棚拍感
 
+【拍摄约束 — 手机拍摄指南】
+- 全程手机横屏拍摄, 不用专业设备
+- 景别: 开场用中近景(半身), 产品展示用特写(鞋占满画面), 环境用全景(门店)
+- 运镜: 固定机位为主, 产品展示可慢推(手持缓慢靠近), 拒绝快速变焦和转场特效
+- 灯光: 店门口自然光或店内顶灯即可, 不要打光太亮, 保持真实生活感
+- 构图: 人物居中偏上, 不要切到头顶; 鞋的镜头从顾客视角拍(俯视,更自然)
+- 声音: 环境音保留(店里的背景声), 口播清晰优先于画面精美
+- 字幕: 大字(手机竖屏看也要清楚), 关键字用花字强调(价格/活动/福利)
+
 【输出格式】
 ## 分镜脚本
-| 时间段 | 画面 | 口播 | 字幕 |
+| 时间段 | 景别 | 运镜 | 画面 | 口播 | 字幕/花字 |
+
+## 拍摄备忘
+- 需要提前准备的道具/物品
+- 拍摄位置和机位建议
+- 注意事项(光线/声音/服装)
 
 ## 完整口播
 (连续文本)
@@ -585,9 +601,12 @@ function updateSteps(active) {
   }
 }
 function switchOutputTab(tab) {
-  document.querySelectorAll('.output-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='decon'&&i===0)||(tab==='script'&&i===1)||(tab==='guardrail'&&i===2)));
+  const tabs = ['decon','script','filming','guardrail'];
+  const paneIds = ['paneDecon','paneScript','paneFilming','paneGuardrail'];
+  const idx = tabs.indexOf(tab);
+  document.querySelectorAll('.output-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
   document.querySelectorAll('.output-pane').forEach(p=>p.classList.remove('active'));
-  document.getElementById(tab==='decon'?'paneDecon':tab==='script'?'paneScript':'paneGuardrail').classList.add('active');
+  if (idx>=0) document.getElementById(paneIds[idx]).classList.add('active');
 }
 
 async function runDeconstruct() {
@@ -619,6 +638,10 @@ async function runRewrite() {
     scriptResult=r; guardrailIssues=checkGuardrail(r);
     document.getElementById('paneScript').innerHTML=mdToHtml(r);
     document.getElementById('paneGuardrail').innerHTML=renderGuardrail(guardrailIssues);
+    // Extract filming guide section
+    const filmMatch = r.match(/##\s*拍摄备忘[\s\S]*?(?=##\s|$)/);
+    const filmContent = filmMatch ? filmMatch[0] : '拍摄指南请见分镜脚本中的景别/运镜列。';
+    document.getElementById('paneFilming').innerHTML = '<div style="background:var(--orange-bg);border:1px solid var(--orange-border);border-radius:8px;padding:16px;"><h3 style="color:var(--orange);margin-bottom:8px;">🎥 拍摄指南</h3>'+mdToHtml(filmContent)+'</div>';
     document.getElementById('outputArea').classList.add('show');
     switchOutputTab('script');
     setStatus('done','二创完成 ✅');
@@ -631,6 +654,7 @@ async function runFull() {
   deconResult=null;scriptResult=null;guardrailIssues=[];
   document.getElementById('paneDecon').innerHTML='<div class="dim-block">分析中...</div>';
   document.getElementById('paneScript').innerHTML='<div class="dim-block">等待拆解完成...</div>';
+  document.getElementById('paneFilming').innerHTML='<div class="dim-block">等待脚本生成...</div>';
   document.getElementById('paneGuardrail').innerHTML='<div class="dim-block">等待脚本生成...</div>';
   document.getElementById('outputArea').classList.add('show');
   switchOutputTab('decon'); updateSteps(1);
