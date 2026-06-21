@@ -7,3 +7,5 @@ outputs/corpus.jsonl
 outputs/experiments.jsonl
 *.log
 outputs/
+*.pdf
+legacy/
