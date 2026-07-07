@@ -380,7 +380,7 @@ async function runViaBackend() {
             } else if (evt.agent === 'script_writer') {
               script = evt.output;
               document.getElementById('paneScript').innerHTML = mdToHtml(script);
-              document.getElementById('paneFilming').innerHTML = '<div style="background:var(--orange-bg);border:1px solid #FDE68A;border-radius:8px;padding:16px;"><h3 style="color:var(--orange);">Filming Guide</h3>'+mdToHtml(filmingGuide||'See script above for shot-by-shot instructions.')+'</div>';
+              document.getElementById('paneFilming').innerHTML = '<div style="background:var(--orange-bg);border:1px solid #FDE68A;border-radius:8px;padding:16px;"><h3 style="color:var(--orange);">🎥 拍摄指南</h3>'+mdToHtml(filmingGuide||'详见分镜脚本中的景别/运镜说明')+'</div>';
               updateSteps(4);
             } else if (evt.agent === 'guardrail') {
               issues = evt.issues || [];
@@ -416,58 +416,70 @@ async function runFullLocal() {
 // PROMPTS (English, TikTok-optimized)
 // ═══════════════════════════════════
 function buildDeconPrompt(t) {
-  return `Perform a 5-layer deconstruction of this TikTok video transcript.
+  return `对以下对标视频逐字稿做五层拆解。中文输出。
 
 ${t}
 
-Output (Markdown):
+## 1. 钩子类型
+前3秒用了什么钩子? (对比/反常识/身份认同/利益前置/争议) 为什么能让人停下来?
 
-## 1. Hook Analysis
-What hook pattern was used in the first 3 seconds? (Pattern Interrupt / Curiosity Gap / Value First / Identity Hook / Controversy)
-Why did it stop the scroll? What emotion did it trigger?
+## 2. 叙事结构
+| 时间段 | 功能 | 画面 | 声音 | 停留力(1-5) |
+对标哪种结构? (对比冲击型/教学循环型/故事弧线型/产品展示型)
 
-## 2. Structure Breakdown
-| Time | Function | Visual | Audio | Retention Score (1-5) |
-Which TikTok structure does this match? (Contrast Burst / Educational Loop / Story Arc / Product Showcase)
+## 3. 情绪曲线
+- 0-25%: 观众感到___
+- 25-75%: 情绪转变到___
+- 75-100%: 最终感受是___
 
-## 3. Emotional Arc
-- 0-25%: Viewer feels ___
-- 25-75%: Shifts to ___
-- 75-100%: Takeaway is ___
+## 4. 口播节奏
+平均单句长度? 停顿模式? 能量切换点?
 
-## 4. Speaking Rhythm
-- Avg sentence length, pause patterns, energy shifts
-
-## 5. Viral Hypothesis (MOST IMPORTANT — Falsifiable)
-This video went viral because ___. If this is true, applying the same pattern to ${getBrand()} should ___.`;
+## 5. 爆款假设 (最重要 — 可证伪)
+这条视频能火, 核心原因是___。把这个点搬到${getBrand()}, 应该做什么?`;
 }
 
 function buildRewritePrompt(t, decon) {
-  return `Adapt this viral TikTok structure into an original script for ${getBrand()}.
+  return `根据对标视频拆解, 为${getBrand()}二创一条短视频脚本。中文输出。
 
-VIDEO TRANSCRIPT:
+【对标逐字稿】
 ${t.slice(0, 600)}
 
-DECONSTRUCTION:
+【拆解分析】
 ${decon.slice(0, 1200)}
 
-CREATOR CONSTRAINTS:
-- Solo creator, smartphone only, no professional equipment
-- Natural light or existing room light, no studio setup
-- Filming location: actual store/workspace
-- Language: authentic, conversational, like talking to one person
-- Hook MUST land in first 3 seconds — no intro, no "hey guys"
-- CTA: natural — "drop a comment", "save this", "tap the yellow bag"
+【拍摄约束】
+- 单人拍摄, 只用手机, 无专业设备
+- 自然光或店内灯光, 无棚拍
+- 拍摄地点: 实际店内
+- 语言: 真实自然, 像跟朋友聊天
+- 前3秒必须有钩子 — 无开场白, 无"大家好"
+- CTA: 自然引导 — "评论区告诉我""收藏起来""店里来看看"
 
-OUTPUT:
-## Script Overview (hook type, structure, target duration, recommended TikTok sound)
+【人设约束】
+- 开场第一句: 「我们家」「我们店里」「房山这边」三选一
+- 禁止: 家人们/宝子们/绝绝子/冲/yyds/最好/第一/100%
+- 北京本地口语风格
 
-## Shot-by-Shot Script
-| Time | Shot Type | Camera Move | Visual | Voiceover | On-Screen Text |
+【输出格式】
+## 脚本概览 (钩子类型, 结构, 预计时长)
 
+## 分镜脚本
+| 时间段 | 景别 | 运镜 | 画面 | 口播 | 字幕/花字 |
+
+## 拍摄检查清单
+- [ ] 需要提前准备的道具:
+- [ ] 最佳拍摄位置:
+- [ ] 光线时机:
+- [ ] 穿着建议:
+
+## 完整口播稿
+
+## 帖子文案 + Hashtag`;
+}
 (Shot Types: Close-up / Medium / Wide. Camera: Locked / Slow Push / Pan)
 
-## Filming Checklist
+## 拍摄检查清单
 - [ ] Props needed:
 - [ ] Best location in store:
 - [ ] Lighting window (time of day):
@@ -565,7 +577,7 @@ async function runDeconstructLocal() {
   updateSteps(2);
   document.getElementById('btnDecon').disabled = true;
   try {
-    deconResult = await callLLM(buildDeconPrompt(t), 'You are a TikTok content strategist. Respond in English, Markdown format. Be concise.');
+    deconResult = await callLLM(buildDeconPrompt(t), '你是短视频内容研究员。请用中文回复。');
     document.getElementById('paneDecon').innerHTML = mdToHtml(deconResult);
     document.getElementById('outputArea').classList.add('show');
     document.getElementById('btnRewrite').disabled = false;
@@ -582,12 +594,12 @@ async function runRewriteLocal() {
   updateSteps(3);
   document.getElementById('btnRewrite').disabled = true;
   try {
-    scriptResult = await callLLM(buildRewritePrompt(t, deconResult), 'You are a TikTok creative director for '+getBrand()+'. Respond in English.');
+    scriptResult = await callLLM(buildRewritePrompt(t, deconResult), '你是'+getBrand()+'的短视频编导。请用中文回复。');
     guardrailIssues = checkGuardrail(scriptResult);
-    const fm = scriptResult.match(/##\s*Filming Checklist[\s\S]*?(?=##\s|$)/);
-    filmingGuide = fm ? fm[0] : 'See shot-by-shot table above.';
+    const fm = scriptResult.match(/##\s*(?:拍摄检查清单|Filming Checklist)[\s\S]*?(?=##\s|$)/);
+    filmingGuide = fm ? fm[0] : '详见分镜脚本中的景别/运镜说明';
     document.getElementById('paneScript').innerHTML = mdToHtml(scriptResult);
-    document.getElementById('paneFilming').innerHTML = '<div style="background:var(--orange-bg);border:1px solid #FDE68A;border-radius:8px;padding:16px;"><h3 style="color:var(--orange);">Filming Guide</h3>'+mdToHtml(filmingGuide)+'</div>';
+    document.getElementById('paneFilming').innerHTML = '<div style="background:var(--orange-bg);border:1px solid #FDE68A;border-radius:8px;padding:16px;"><h3 style="color:var(--orange);">🎥 拍摄指南</h3>'+mdToHtml(filmingGuide)+'</div>';
     document.getElementById('paneGuardrail').innerHTML = renderGuardrail(guardrailIssues);
     document.getElementById('outputArea').classList.add('show');
     switchTab('script');
