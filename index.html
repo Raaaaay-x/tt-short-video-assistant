@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>tt_agent — 短视频内容研究员</title>
+<title>tt_agent — TikTok Content Intelligence</title>
 <style>
   :root {
     --bg: #F8F9FB; --surface: #FFFFFF; --border: #E8ECF1;
@@ -158,9 +158,9 @@
   <span class="logo">tt_agent</span>
   <span class="badge">v3.0</span>
   <nav class="nav">
-    <a href="#" onclick="showExample('shoe')">洗鞋展示</a>
-    <a href="#" onclick="showExample('retail')">鞋城零售</a>
-    <a href="#" onclick="showExample('knowledge')">材质科普</a>
+    <a href="#" onclick="showExample('shoe')">Shoe Store</a>
+    <a href="#" onclick="showExample('beauty')">Beauty</a>
+    <a href="#" onclick="showExample('food')">Food</a>
     <a href="https://github.com/Raaaaay-x/tt-short-video-assistant" target="_blank">GitHub</a>
   </nav>
 </header>
@@ -168,19 +168,19 @@
 <div class="main">
   <aside class="sidebar">
     <div class="card">
-      <h3>📋 工作流</h3>
+      <h3>Workflow</h3>
       <ul class="steps">
-        <li id="step1"><span class="num">1</span> 粘贴对标逐字稿</li>
-        <li id="step2"><span class="num">2</span> 五层拆解</li>
-        <li id="step3"><span class="num">3</span> 脚本二创</li>
-        <li id="step4"><span class="num">4</span> 拍摄指南</li>
-        <li id="step5"><span class="num">5</span> 合规检查</li>
+        <li id="step1"><span class="num">1</span> Paste transcript</li>
+        <li id="step2"><span class="num">2</span> Deconstruct</li>
+        <li id="step3"><span class="num">3</span> Adapt script</li>
+        <li id="step4"><span class="num">4</span> Filming guide</li>
+        <li id="step5"><span class="num">5</span> Guardrail check</li>
       </ul>
     </div>
 
     <div class="card">
-      <h3>🔑 API 设置</h3>
-      <p class="dim">Key 仅保存在你的浏览器中</p>
+      <h3>API Settings</h3>
+      <p class="dim">Key stored in your browser only</p>
       <select id="provider" onchange="saveKey()" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem;margin-bottom:6px;">
         <option value="deepseek">DeepSeek</option>
         <option value="stepfun">StepFun (Step 3.7)</option>
@@ -188,8 +188,8 @@
       </select>
       <input type="password" id="apiKey" placeholder="API Key" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem;margin-bottom:6px;">
       <div style="display:flex;gap:6px;">
-        <input type="text" id="brandName" placeholder="品牌名称" value="芮玛鞋城" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem;">
-        <button onclick="saveKey()" style="padding:6px 12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:0.8rem;cursor:pointer;">保存</button>
+        <input type="text" id="brandName" placeholder="Brand name" value="Rui Ma Shoes" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:0.8rem;">
+        <button onclick="saveKey()" style="padding:6px 12px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:0.8rem;cursor:pointer;">Save</button>
       </div>
       <p id="keyStatus" style="font-size:0.72rem;margin-top:4px;"></p>
     </div>
@@ -197,27 +197,27 @@
 
   <main class="content">
     <div class="card">
-      <h3>📹 对标视频逐字稿</h3>
+      <h3>Competitor Video Transcript</h3>
       <div style="margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap;">
-        <span class="tag" style="cursor:pointer;background:var(--accent-bg);color:var(--accent);" onclick="showExample('shoe')">洗鞋展示</span>
-        <span class="tag" style="cursor:pointer;background:var(--accent-bg);color:var(--accent);" onclick="showExample('retail')">鞋城零售</span>
-        <span class="tag" style="cursor:pointer;background:var(--accent-bg);color:var(--accent);" onclick="showExample('knowledge')">材质科普</span>
-        <span class="tag" style="cursor:pointer;background:var(--bg);color:var(--ink-dim);" id="backendToggle" onclick="toggleBackend()">多Agent: OFF</span>
+        <span class="tag" style="cursor:pointer;background:var(--accent-bg);color:var(--accent);" onclick="showExample('shoe')">Shoe Store</span>
+        <span class="tag" style="cursor:pointer;background:var(--accent-bg);color:var(--accent);" onclick="showExample('beauty')">Beauty</span>
+        <span class="tag" style="cursor:pointer;background:var(--accent-bg);color:var(--accent);" onclick="showExample('food')">Food</span>
+        <span class="tag" style="cursor:pointer;background:var(--bg);color:var(--ink-dim);" id="backendToggle" onclick="toggleBackend()">Backend: OFF</span>
       </div>
-      <textarea id="transcript" placeholder="粘贴对标视频的逐字稿...
+      <textarea id="transcript" placeholder="Paste a competitor's TikTok video transcript...
 
-格式:
-[0:00-0:03] 【画面】脏鞋特写，慢推镜头
-【口播】你看这双鞋进来的样子，鞋底都磨平了
-[0:03-0:08] 【画面】清洗过程，手部特写
-【口播】我们先用这个软化一下皮面
+Format:
+[0:00-0:03] Close-up of dirty sneakers
+[VO] Watch what happens to these after one wash.
+[0:03-0:08] Cleaning process, foam on leather
+[VO] We use this softener first. See the dirt lifting out?
 
-也可以直接粘贴纯文本口播。"></textarea>
+Or just paste the voiceover text directly."></textarea>
       <div class="btn-row">
-        <button class="btn btn-primary" id="btnFull" onclick="runFull()">⚡ 一键全流程</button>
-        <button class="btn btn-outline" id="btnDecon" onclick="runDeconstruct()">1. 先拆解</button>
-        <button class="btn btn-outline" id="btnRewrite" onclick="runRewrite()" disabled>2. 再二创</button>
-        <button class="btn btn-ghost" onclick="downloadResult()">💾 下载报告</button>
+        <button class="btn btn-primary" id="btnFull" onclick="runFull()">Run Full Pipeline</button>
+        <button class="btn btn-outline" id="btnDecon" onclick="runDeconstruct()">1. Deconstruct</button>
+        <button class="btn btn-outline" id="btnRewrite" onclick="runRewrite()" disabled>2. Adapt Script</button>
+        <button class="btn btn-ghost" onclick="downloadResult()">Download .md</button>
       </div>
       <div class="streaming-indicator" id="streamingInd">
         <span class="status-dot running"></span>
@@ -225,21 +225,21 @@
       </div>
       <div class="status-bar">
         <span class="status-dot idle" id="statusDot"></span>
-        <span id="statusText" style="color:var(--ink-dim);">就绪 — 粘贴逐字稿后点击「一键全流程」</span>
+        <span id="statusText" style="color:var(--ink-dim);">Ready — paste a transcript and click "Run Full Pipeline"</span>
       </div>
     </div>
 
     <div class="output-area" id="outputArea">
       <div class="output-tabs">
-        <button class="output-tab active" onclick="switchTab('decon')">📊 拆解报告</button>
-        <button class="output-tab" onclick="switchTab('script')">✍️ 二创脚本</button>
-        <button class="output-tab" onclick="switchTab('filming')">🎥 拍摄指南</button>
-        <button class="output-tab" onclick="switchTab('guardrail')">🛡️ 合规检查</button>
+        <button class="output-tab active" onclick="switchTab('decon')">Deconstruct</button>
+        <button class="output-tab" onclick="switchTab('script')">Script</button>
+        <button class="output-tab" onclick="switchTab('filming')">Filming Guide</button>
+        <button class="output-tab" onclick="switchTab('guardrail')">Guardrail</button>
       </div>
-      <div class="output-pane active" id="paneDecon"><div class="dim-block">点击「一键全流程」开始分析</div></div>
-      <div class="output-pane" id="paneScript"><div class="dim-block">等待拆解完成...</div></div>
-      <div class="output-pane" id="paneFilming"><div class="dim-block">等待脚本生成...</div></div>
-      <div class="output-pane" id="paneGuardrail"><div class="dim-block">等待脚本生成...</div></div>
+      <div class="output-pane active" id="paneDecon"><div class="dim-block">Click "Run Full Pipeline" to start</div></div>
+      <div class="output-pane" id="paneScript"><div class="dim-block">Waiting for deconstruction...</div></div>
+      <div class="output-pane" id="paneFilming"><div class="dim-block">Waiting for script...</div></div>
+      <div class="output-pane" id="paneGuardrail"><div class="dim-block">Running after script generation</div></div>
     </div>
   </main>
 </div>
@@ -254,7 +254,7 @@ let useBackend = false, backendUrl = 'http://localhost:8080';
 function toggleBackend() {
   useBackend = !useBackend;
   const el = document.getElementById('backendToggle');
-  el.textContent = '多Agent: ' + (useBackend ? 'ON' : 'OFF');
+  el.textContent = 'Backend: ' + (useBackend ? 'ON' : 'OFF');
   el.style.background = useBackend ? 'var(--green-bg)' : 'var(--bg)';
   el.style.color = useBackend ? 'var(--green)' : 'var(--ink-dim)';
 }
@@ -263,30 +263,26 @@ function toggleBackend() {
 // EXAMPLES
 // ═══════════════════════════════════
 const EXAMPLES = {
-  shoe: `[0:00-0:03] 【画面】脏鞋特写，慢推镜头，鞋底磨损明显
-【口播】你看这双鞋进来的样子，鞋底都磨平了。
-[0:03-0:08] 【画面】清洗过程，手部特写，泡沫从脏处溢出
-【口播】我们先用这个软化一下皮面，你看这个脏东西慢慢就出来了。
-[0:08-0:12] 【画面】干净成品展示，多角度旋转
-【口播】洗完以后你看，这个鞋面和新的差不多，鞋底也干净了。
-[0:12-0:15] 【画面】老板娘站在操作台边，微笑
-【口播】还有什么鞋想洗的，评论区告诉我。`,
-  retail: `[0:00-0:03] 【画面】鞋城货架全景，慢摇镜头
-【口播】房山的姐妹应该都认识我们家，今儿带你看一双刚到的好鞋。
-[0:03-0:12] 【画面】鞋的特写，手部翻看材质和做工
-【口播】你看这个皮面的走线，这个鞋底的软度，专柜两千多的品质。咱们家直接从工厂拿，省去中间环节，价格你过来看就知道多实在。
-[0:12-0:18] 【画面】多款鞋的快速切换
-【口播】还有这几款，都是这周刚到的。来店里试，不买也没事，看看款式。
-[0:18-0:20] 【画面】店门口招牌
-【口播】找不到的导航搜芮玛鞋城。`,
-  knowledge: `[0:00-0:03] 【画面】翻毛皮鞋面特写，手指划过
-【口播】你的翻毛皮鞋可能早就被你洗坏了。
-[0:03-0:12] 【画面】错误方法→正确方法演示
-【口播】大多数人用湿布直接擦，但你发现没有，越擦越硬。正确的做法是先用干刷把灰清掉，再用专门的清洁剂。你看这个对比——
-[0:12-0:18] 【画面】正确清洗后的翻毛皮效果
-【口播】处理完以后，毛还是立着的，颜色也没变。这个就是专业和业余的区别。
-[0:18-0:20] 【画面】老板娘的双手，做了个"交给我"的手势
-【口播】不会弄的，拿来我们家，师傅帮你搞定。`
+  shoe: `[0:00-0:03] Close-up of filthy sneakers, slow push in
+[VO] These came in looking like THIS. Watch the after.
+[0:03-0:08] Cleaning process — foam lifting dirt from leather
+[VO] We soften the leather first. See that dirt lifting out?
+[0:08-0:12] Clean shoes reveal, 360 spin
+[VO] After. Looks almost new. The sole is clean, the leather is restored.
+[0:12-0:15] Shop owner at counter
+[VO] What shoes do YOU need cleaned? Drop a comment.`,
+  beauty: `[0:00-0:03] Split screen: "Before" dull skin vs "After" glow
+[VO] I tried this $12 serum for 30 days. Here's what happened.
+[0:03-0:15] Daily application clips, fast-cut montage
+[VO] Week 1: nothing. Week 2: my roommate asked if I was wearing makeup.
+[0:15-0:20] Final result, no filter
+[VO] Week 4: this. No filter. Link in bio if you want to try it.`,
+  food: `[0:00-0:03] Sizzling pan, steam rising, ASMR sound
+[VO] Stop boiling your pasta in plain water. Do THIS instead.
+[0:03-0:15] Step-by-step cooking, text overlays
+[VO] Salt the water like the ocean. Save a cup of pasta water.
+[0:15-0:20] Final plated dish
+[VO] Toss it in the pan with the sauce and that pasta water. Game changer.`
 };
 
 function showExample(type) {
@@ -303,7 +299,7 @@ function saveKey() {
   if (key) {
     localStorage.setItem('tt_agent_api_key', key);
     localStorage.setItem('tt_agent_provider', prov);
-    document.getElementById('keyStatus').textContent = '已保存 ✅';
+    document.getElementById('keyStatus').textContent = 'Saved';
     document.getElementById('keyStatus').style.color = 'var(--green)';
   }
 }
@@ -623,7 +619,7 @@ function downloadResult() {
 document.addEventListener('DOMContentLoaded', () => {
   const key = localStorage.getItem('tt_agent_api_key');
   const prov = localStorage.getItem('tt_agent_provider');
-  if (key) { document.getElementById('apiKey').value = key; document.getElementById('keyStatus').textContent = '已加载 ✅'; document.getElementById('keyStatus').style.color = 'var(--green)'; }
+  if (key) { document.getElementById('apiKey').value = key; document.getElementById('keyStatus').textContent = 'Loaded'; document.getElementById('keyStatus').style.color = 'var(--green)'; }
   if (prov) document.getElementById('provider').value = prov;
 });
 
